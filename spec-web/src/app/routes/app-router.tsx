@@ -1,44 +1,31 @@
-import { useState, useEffect } from 'react';
-import {
-    createHashRouter,
-    createRoutesFromElements,
-    Route,
-    RouterProvider,
-} from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { RouterProvider } from "react-router-dom";
+import { AuthRouter } from "./auth-router";
+import { MainRouter } from "./main-router";
+import { LoaderScreen } from "../../pages/loader-screen";
 
-import '../styles/global.css';
-import '../styles/fonts.css';
-
-// layouts
-
-// import { Layout } from '../layout/layout';
-import { AuthLayout } from '../layout/auth-layout';
-
-// Screens
-import { RegistrationScreen } from '../../pages/registration-screen';
-import { LoaderScreen } from '../../pages/loader-screen';
+import '../styles/global.css'
+import '../styles/fonts.css'
 
 export const AppRouter = () => {
-    const [loading, setLoading] = useState<boolean>(true);
+    const [initialLoading, setInitialLoading] = useState<boolean>(true);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
     useEffect(() => {
+        // Only run initial loading animation once when app starts
         const initializeApp = async () => {
             await new Promise(resolve => setTimeout(resolve, 3000));
-            setLoading(false);
+            const hasToken = !!localStorage.getItem("token");
+            setIsAuthenticated(hasToken);
+            setInitialLoading(false);
         };
 
         initializeApp();
-    }, []);
+    }, []); // Empty dependency array ensures this only runs once
 
-    const routes = createRoutesFromElements(
-        <Route path='/' element={<AuthLayout />}>
-            <Route index element={<RegistrationScreen />} />
-            <Route path='registration' element={<RegistrationScreen />} />
-        </Route>
-    );
+    if (initialLoading) {
+        return <LoaderScreen />;
+    }
 
-
-    const router = createHashRouter(routes);
-
-    return loading ? <LoaderScreen /> : <RouterProvider router={router} />;
+    return <RouterProvider router={isAuthenticated ? MainRouter : AuthRouter} />;
 };
