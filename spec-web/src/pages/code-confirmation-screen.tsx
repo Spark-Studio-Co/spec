@@ -33,7 +33,7 @@ export const CodeConfitmationScreen = () => {
             </div>
             <Button
                 variant={disabled ? 'disabled' : 'default'}
-                label="Отправить SMS"
+                label="Войти"
                 className="mt-auto"
                 type="submit"
                 disabled={disabled}
