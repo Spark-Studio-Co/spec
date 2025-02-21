@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@layer theme, base, components, utilities;
+
+@theme {
+  --color-main: #6271EB;
+  --color-gray: #D4D4D4;
+  --color-dark: #171717;
+  --color-white: #ffffff;
+}
+
+body {
+    font-family: 'Manrope';
+}
