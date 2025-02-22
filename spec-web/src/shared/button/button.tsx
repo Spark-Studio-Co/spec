@@ -17,6 +17,12 @@ const variantStyle = (variant: string) => {
             return "bg-gray text-white font-[600]";
         default:
             return "bg-main text-white font-[600]";
+        case "transparent":
+            return "bg-[#EFF3FE] text-[#1D1E49] font-[600]";
+        case "red":
+            return "bg-red text-white font-[600]";
+        case "green":
+            return "bg-green text-white font-[600]";
     }
 };
 
@@ -33,7 +39,7 @@ export const Button: React.FC<IButtonProps> = ({
         <button
             className={`${baseStyle(width, height)} ${variantStyle(variant)} ${className}`}
             disabled={disabled}
-            {...props} // Передаем остальные пропсы
+            {...props}
         >
             {label}
         </button>

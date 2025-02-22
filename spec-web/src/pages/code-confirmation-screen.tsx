@@ -1,10 +1,14 @@
 import { SingleValueInput } from "../shared/single-value-input/single-value-input";
 import { Button } from "../shared/button/button"
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
+
+import { useAuthStore } from "../app/model/use-auth-store";
 
 export const CodeConfitmationScreen = () => {
     const [disabled, setDisabled] = useState<boolean>(true);
     const [values, setValues] = useState<string[]>(Array(4).fill(''));
+
+    const { setAuth } = useAuthStore()
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(4).fill(null));
 
@@ -28,8 +32,21 @@ export const CodeConfitmationScreen = () => {
     let formattedValue = values.join('');
     console.log(formattedValue)
 
+    const handleSubmit = (e: SyntheticEvent) => {
+        e.preventDefault()
+        console.log("Отправка кода:", values);
+
+        setDisabled(true);
+
+        setAuth(true);
+
+        setTimeout(() => window.location.hash = '/', 1000)
+
+    }
+
+
     return (
-        <form className="flex flex-col justify-between h-full" >
+        <form className="flex flex-col justify-between h-full" onSubmit={handleSubmit}>
             <div className="flex flex-col">
                 <span className="text-dark font-semibold text-[24px] leading-[28px]">
                     Мы отправили SMS на номер

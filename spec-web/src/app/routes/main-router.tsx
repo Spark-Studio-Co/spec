@@ -1,13 +1,13 @@
-import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
+import { createHashRouter, createRoutesFromElements, Route } from "react-router-dom";
 import { Layout } from "../layout/layout";
-// import { HomeScreen } from "../../pages/home-screen"; // Example
-// import { ProfileScreen } from "../../pages/profile-screen"; // Example
 
-export const MainRouter = createBrowserRouter(
+// screens
+import { ApplicationScreen } from "../../pages/applications-screen";
+
+export const MainRouter = createHashRouter(
     createRoutesFromElements(
         <Route path="/" element={<Layout />}>
-            {/* <Route index element={<HomeScreen />} /> */}
-            {/* <Route path="profile" element={<ProfileScreen />} /> */}
+            <Route index element={<ApplicationScreen />} />
         </Route>
     )
 );
