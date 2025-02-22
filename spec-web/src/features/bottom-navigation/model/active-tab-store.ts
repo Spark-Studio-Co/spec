@@ -6,6 +6,6 @@ export interface IActiveTabStore {
 }
 
 export const useActiveTabStore = create<IActiveTabStore>(set => ({
-    activeTab: 'application',
+    activeTab: 'Заявки',
     setActiveTab: (tab: string) => set({ activeTab: tab })
 }))

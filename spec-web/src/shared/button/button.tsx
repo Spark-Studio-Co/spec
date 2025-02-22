@@ -20,9 +20,9 @@ const variantStyle = (variant: string) => {
         case "transparent":
             return "bg-[#EFF3FE] text-[#1D1E49] font-[600]";
         case "red":
-            return "bg-red text-white font-[600]";
+            return "bg-[#FFE2E2] text-dark font-[600]";
         case "green":
-            return "bg-green text-white font-[600]";
+            return "bg-[#B9F8CF] text-dark font-[600]";
     }
 };
 

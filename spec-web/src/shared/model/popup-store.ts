@@ -25,5 +25,6 @@ export const usePopupStore = (storeKey: string, passedValue?: string) => {
     if (passedValue !== undefined) {
         popupStorage[storeKey]().setPassedValue(passedValue);
     }
+
     return popupStorage[storeKey]()
 }
