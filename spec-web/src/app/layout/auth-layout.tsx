@@ -20,7 +20,7 @@ export const AuthLayout = () => {
             {isBack && (
                 <button
                     onClick={handleBack}
-                    className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-4 top-10 flex items-center justify-center"
+                    className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-4 top-14 flex items-center justify-center"
                 >
                     <BackArrowIcon />
                 </button>

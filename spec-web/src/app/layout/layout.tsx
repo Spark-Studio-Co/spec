@@ -6,7 +6,7 @@ export const Layout = () => {
     return (
         <>
             <div className="px-4 bg-[#F5F5F5] h-[100%] pb-24">
-                <main className="pt-8"><Outlet /></main>
+                <main className="pt-20"><Outlet /></main>
             </div>
             <BottomPanel />
         </>
