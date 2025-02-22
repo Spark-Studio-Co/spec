@@ -20,12 +20,12 @@ export const AuthLayout = () => {
             {isBack && (
                 <button
                     onClick={handleBack}
-                    className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-4 top-5 flex items-center justify-center"
+                    className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-4 top-10 flex items-center justify-center"
                 >
                     <BackArrowIcon />
                 </button>
             )}
-            <div className="flex flex-col h-screen px-4 py-20">
+            <div className="flex flex-col h-screen px-4 pt-28 pb-14">
                 <main className="flex-grow"><Outlet /></main>
             </div>
         </div>
