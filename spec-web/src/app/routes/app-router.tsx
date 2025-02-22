@@ -17,7 +17,7 @@ export const AppRouter = () => {
         const initializeApp = async () => {
             await new Promise(resolve => setTimeout(resolve, 3000));
             // const hasToken = !!localStorage.getItem("token");
-            setAuth(true);
+            setAuth(false);
             setInitialLoading(false);
         };
 
