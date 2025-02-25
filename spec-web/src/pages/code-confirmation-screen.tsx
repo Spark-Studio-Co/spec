@@ -3,8 +3,16 @@ import { Button } from "../shared/button/button"
 import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
 
 import { useAuthStore } from "../app/model/use-auth-store";
+import { useRecieveCodeStore } from "../entities/auth-user/model/recieve-code-store";
+import { useSendCodeStore } from "../entities/auth-user/model/send-code-store";
+
+import { useSendCode } from "../entities/auth-user/api/use-send-code";
+
 
 export const CodeConfirmationScreen = () => {
+    const { mutate } = useSendCode()
+    const { submit, isLoading } = useSendCodeStore()
+    const { phone } = useRecieveCodeStore()
     const [disabled, setDisabled] = useState<boolean>(true);
     const [values, setValues] = useState<string[]>(Array(4).fill(''));
 
@@ -28,21 +36,17 @@ export const CodeConfirmationScreen = () => {
             inputRefs.current[index - 1]?.focus();
         }
     }
-
     let formattedValue = values.join('');
     console.log(formattedValue)
 
     const handleSubmit = (e: SyntheticEvent) => {
-        e.preventDefault()
-        console.log("Отправка кода:", values);
-
+        e.preventDefault();
         setDisabled(true);
 
-        setAuth(true);
+        submit(e, mutate, formattedValue, phone);
 
-        setTimeout(() => window.location.hash = '/', 1000)
-
-    }
+        setTimeout(() => setAuth(true), 1000)
+    };
 
 
     return (
@@ -52,7 +56,7 @@ export const CodeConfirmationScreen = () => {
                     Мы отправили SMS на номер
                 </span>
                 <span className="text-[20px] text-dark font-normal leading-[28px] mt-3">
-                    +7-747-422-35-59
+                    {phone}
                 </span>
                 <div className="flex flex-row justify-between mt-8">
                     {Array(4).fill(null).map((_, index) => (
@@ -68,7 +72,7 @@ export const CodeConfirmationScreen = () => {
             </div>
             <Button
                 variant={disabled ? 'disabled' : 'default'}
-                label="Войти"
+                label={isLoading ? "Загрузка..." : "Войти"}
                 className="mt-auto"
                 type="submit"
                 disabled={disabled}

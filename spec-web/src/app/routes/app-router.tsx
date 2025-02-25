@@ -5,26 +5,31 @@ import { MainRouter } from "./main/main-router";
 import { LoaderScreen } from "../../pages/loader-screen";
 import { useAuthStore } from "../model/use-auth-store";
 
-import '../styles/global.css';
-import '../styles/fonts.css';
+import '../styles/fonts.css'
+import '../styles/global.css'
 
 export const AppRouter = () => {
+    const isAuth = useAuthStore((state) => state.isAuth);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
-    const { isAuth, setAuth } = useAuthStore();
 
     useEffect(() => {
-        const initializeApp = async () => {
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            setAuth(false);
+        setTimeout(() => {
             setInitialLoading(false);
-        };
-
-        initializeApp();
+        }, 3000);
     }, []);
+
+    useEffect(() => {
+        console.log("🚀 isAuth changed in AppRouter:", isAuth);
+    }, [isAuth]); // Track changes in isAuth
 
     if (initialLoading) {
         return <LoaderScreen />;
     }
 
-    return <RouterProvider router={isAuth ? MainRouter : AuthRouter} />;
+    return (
+        <RouterProvider
+            key={isAuth ? "auth" : "guest"}  // ✅ Forces re-render when isAuth changes
+            router={isAuth ? MainRouter : AuthRouter}
+        />
+    );
 };

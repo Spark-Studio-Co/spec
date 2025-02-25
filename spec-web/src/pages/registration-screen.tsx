@@ -1,19 +1,18 @@
-import { ChangeEvent, SyntheticEvent, useState } from "react";
+import { ChangeEvent, useState, SyntheticEvent } from "react";
 import { Button } from "../shared/button/button";
 import { Input } from "../shared/input/input";
 import { useNavigate } from "react-router-dom";
-
+import { useRecieveCodeStore } from "../entities/auth-user/model/recieve-code-store";
+import { useRecieveCode } from "../entities/auth-user/api/use-recieve-code";
 import { inputMask } from "../shared/utils/inputMask";
 
-import { receiveCode } from "../entities/auth-user/api/recieve-code.api";
-
 export const RegistrationScreen = () => {
+    const { phone, setPhone, submit, isLoading } = useRecieveCodeStore();
     const [disabled, setDisabled] = useState<boolean>(true);
-    const [phone, setPhone] = useState<string>("");
+    const [rawPhone, setRawPhone] = useState<string>("");
+    const { mutate } = useRecieveCode();
     const navigate = useNavigate();
 
-
-    const [rawPhone, setRawPhone] = useState<string>("");
 
     const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { rawLength, rawValue } = inputMask(e, setPhone);
@@ -21,21 +20,9 @@ export const RegistrationScreen = () => {
         setDisabled(rawLength < 11);
     };
 
-    const handleSubmit = async (e: SyntheticEvent) => {
-        e.preventDefault();
-        try {
-            const data = { phone: rawPhone };
-            const result = await receiveCode(data);
-            console.log('Response:', result);
-            setDisabled(true);
-            navigate('/code-confirmation', { replace: true });
-        } catch (error: any) {
-            console.error('Error', {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status
-            });
-        }
+    const handleSubmit = (e: SyntheticEvent) => {
+        submit(e, mutate, navigate, rawPhone);
+        setDisabled(true);
     };
 
     return (
@@ -58,7 +45,7 @@ export const RegistrationScreen = () => {
             </div>
             <Button
                 variant={disabled ? 'disabled' : 'default'}
-                label="Отправить SMS"
+                label={isLoading ? 'Отправка...' : 'Отправить SMS'}
                 className="mt-auto"
                 type="submit"
                 disabled={disabled}

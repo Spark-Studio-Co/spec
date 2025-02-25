@@ -1,10 +1,14 @@
 import { apiClient } from "../../../app/config/apiClient";
 
-export const sendCode = async () => {
+import { ISendCodeRDO } from "./auth-user.rdo";
+
+export const sendCode = async (data: ISendCodeRDO) => {
     try {
-        const response = await apiClient.post('/api/user/send-sms')
-        console.log('Code sended', response.data)
-    } catch {
-        console.error('Code was not sended')
+        const response = await apiClient.post('/api/users/send-sms', data);
+        console.log('Code sent successfully:', response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error('Failed to send code:', error.response?.data || error.message);
+        throw error;
     }
 }
