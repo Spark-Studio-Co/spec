@@ -4,7 +4,7 @@ import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
 
 import { useAuthStore } from "../app/model/use-auth-store";
 
-export const CodeConfitmationScreen = () => {
+export const CodeConfirmationScreen = () => {
     const [disabled, setDisabled] = useState<boolean>(true);
     const [values, setValues] = useState<string[]>(Array(4).fill(''));
 

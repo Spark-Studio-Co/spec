@@ -5,25 +5,37 @@ import { useNavigate } from "react-router-dom";
 
 import { inputMask } from "../shared/utils/inputMask";
 
+import { receiveCode } from "../entities/auth-user/api/recieve-code.api";
+
 export const RegistrationScreen = () => {
     const [disabled, setDisabled] = useState<boolean>(true);
     const [phone, setPhone] = useState<string>("");
     const navigate = useNavigate();
 
 
+    const [rawPhone, setRawPhone] = useState<string>("");
+
     const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { rawLength } = inputMask(e, setPhone);
+        const { rawLength, rawValue } = inputMask(e, setPhone);
+        setRawPhone(rawValue || "");
         setDisabled(rawLength < 11);
     };
 
-    const handleSubmit = (e: SyntheticEvent) => {
+    const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault();
-        console.log("Отправка номера:", phone);
-        setDisabled(true);
-
-        setTimeout(() => {
+        try {
+            const data = { phone: rawPhone };
+            const result = await receiveCode(data);
+            console.log('Response:', result);
+            setDisabled(true);
             navigate('/code-confirmation', { replace: true });
-        }, 1000);
+        } catch (error: any) {
+            console.error('Error', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+        }
     };
 
     return (
