@@ -9,7 +9,7 @@ export const SingleValueInput = forwardRef<HTMLInputElement, ISingleValueInput>(
                 ref={ref}
                 placeholder={placeholder}
                 {...props}
-                className="w-[100%] h-[40px] rounded-[8px] flex items-center justify-center border border-[#737373] text-center placeholder:text-center outline-none uppercase"
+                className="w-[100%] h-[50px] rounded-[8px] flex items-center justify-center border border-[#737373] text-center placeholder:text-center outline-none uppercase"
                 maxLength={1}
             />
         );
