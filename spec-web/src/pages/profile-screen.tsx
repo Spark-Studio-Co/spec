@@ -58,7 +58,7 @@ export const ProfileScreen = () => {
             <ProfileHeader name="Gaidar Timirbaev" phone="+998 99 999 99 99" city="Tashkent" />
             <CategoriesList categories={categories} />
             <StatisticsCard date="01.01.2024" applications={1000} totalEarned={300000} commission={88000} earned={212000} />
-            <Button label="go out" variant="default" onClick={handleLogout} />
+            <Button label="Выйти" variant="red" onClick={handleLogout} className="mt-8" />
         </div>
     )
 }

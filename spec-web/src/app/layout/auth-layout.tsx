@@ -16,16 +16,16 @@ export const AuthLayout = () => {
     };
 
     return (
-        <div className="flex flex-col relative">
+        <div className="flex flex-col relative max-w-[90%] m-auto">
             {isBack && (
                 <button
                     onClick={handleBack}
-                    className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-4 top-14 flex items-center justify-center"
+                    className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-0 top-14 flex items-center justify-center"
                 >
                     <BackArrowIcon />
                 </button>
             )}
-            <div className="flex flex-col h-screen px-4 pt-28 pb-14">
+            <div className="flex flex-col h-screen w-full  pt-28 pb-14">
                 <main className="flex-grow"><Outlet /></main>
             </div>
         </div>

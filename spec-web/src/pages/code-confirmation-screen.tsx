@@ -59,16 +59,18 @@ export const CodeConfirmationScreen = () => {
                 <span className="text-[20px] text-dark font-normal leading-[28px] mt-3">
                     {phone}
                 </span>
-                <div className="flex flex-row justify-between mt-8">
-                    {Array(6).fill(null).map((_, index) => (
-                        <SingleValueInput
-                            key={index}
-                            ref={el => { inputRefs.current[index] = el }}
-                            placeholder="X"
-                            value={values[index] || ''}
-                            onChange={handleSetValue(index)}
-                        />
-                    ))}
+                <div className="w-full">
+                    <div className="flex gap-1 flex-row justify-between mt-8 w-full">
+                        {Array(6).fill(null).map((_, index) => (
+                            <SingleValueInput
+                                key={index}
+                                ref={el => { inputRefs.current[index] = el }}
+                                placeholder="X"
+                                value={values[index] || ''}
+                                onChange={handleSetValue(index)}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
             <Button
