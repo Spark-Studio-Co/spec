@@ -29,7 +29,7 @@ export const CodeConfirmationScreen = () => {
         setDisabled(newValues.some(val => val === ""));
         const inputValue = e.target.value.replace(/\D/g, "").slice(0, 1);
 
-        if (inputValue && index < 3 && inputRefs.current[index + 1]) {
+        if (inputValue && index < 6 && inputRefs.current[index + 1]) {
             inputRefs.current[index + 1]?.focus();
         }
 
