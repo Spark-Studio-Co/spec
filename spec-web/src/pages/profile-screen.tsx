@@ -3,7 +3,6 @@ import { ProfileHeader } from "../features/profile-header/ui/profile-header";
 import { StatisticsCard } from "../features/statistics-card/ui/statistics-card";
 
 import { useAuthData } from "../entities/auth-user/api/use-auth-token";
-import { sendSms } from "../entities/auth-user/api/send-sms.api";
 
 import { Button } from "../shared/button/button";
 
