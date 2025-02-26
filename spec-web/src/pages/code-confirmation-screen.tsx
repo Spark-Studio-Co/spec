@@ -3,23 +3,23 @@ import { Button } from "../shared/button/button"
 import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
 
 import { useAuthStore } from "../app/model/use-auth-store";
-import { useRecieveCodeStore } from "../entities/auth-user/model/recieve-code-store";
-import { useSendCodeStore } from "../entities/auth-user/model/send-code-store";
-import { useAuthToken } from "../entities/auth-user/api/use-auth-token";
+import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
+import { useVerifySmsStore } from "../entities/auth-user/model/verify-sms-store";
+import { useAuthData } from "../entities/auth-user/api/use-auth-token";
 
-import { useSendCode } from "../entities/auth-user/api/use-send-code";
+import { useSendCode } from "../entities/auth-user/api/use-verify-sms";
 
 export const CodeConfirmationScreen = () => {
     const { mutate } = useSendCode()
-    const { submit, isLoading } = useSendCodeStore()
-    const { phone } = useRecieveCodeStore()
+    const { submit, isLoading } = useVerifySmsStore()
+    const { phone } = useSendSmsStore()
     const [disabled, setDisabled] = useState<boolean>(true);
-    const [values, setValues] = useState<string[]>(Array(4).fill(''));
+    const [values, setValues] = useState<string[]>(Array(6).fill(''));
 
     const { setAuth } = useAuthStore()
-    const { saveToken } = useAuthToken()
+    const { saveToken, requestId } = useAuthData()
 
-    const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(4).fill(null));
+    const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(6).fill(null));
 
     const handleSetValue = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
@@ -44,7 +44,7 @@ export const CodeConfirmationScreen = () => {
         e.preventDefault();
         setDisabled(true);
 
-        submit(e, mutate, formattedValue, phone, saveToken);
+        submit(e, mutate, formattedValue, phone, requestId!, saveToken);
 
         setTimeout(() => setAuth(true), 1500)
     };
@@ -60,7 +60,7 @@ export const CodeConfirmationScreen = () => {
                     {phone}
                 </span>
                 <div className="flex flex-row justify-between mt-8">
-                    {Array(4).fill(null).map((_, index) => (
+                    {Array(6).fill(null).map((_, index) => (
                         <SingleValueInput
                             key={index}
                             ref={el => { inputRefs.current[index] = el }}

@@ -5,8 +5,8 @@ import { BottomPanel } from "../../features/bottom-navigation/ui/bottom-panel/bo
 export const Layout = () => {
     return (
         <>
-            <div className="h-screen bg-[#F5F5F5] px-4">
-                <main className="pt-20 flex-1"><Outlet /></main>
+            <div className="min-h-[100vh] bg-[#F5F5F5] px-4">
+                <main className="pt-20 pb-28 flex-1"><Outlet /></main>
             </div>
             <BottomPanel />
         </>

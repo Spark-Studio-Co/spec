@@ -1,8 +1,9 @@
-export interface IRecieveCodeRDO {
+export interface ISendSmsRDO {
     phone: string
 }
 
-export interface ISendCodeRDO {
+export interface IVerifySmsRDO {
     phone: string
     code: string
+    requet_id: string
 }

@@ -2,6 +2,11 @@ import { CategoriesList } from "../features/categories-list/ui/categories-list";
 import { ProfileHeader } from "../features/profile-header/ui/profile-header";
 import { StatisticsCard } from "../features/statistics-card/ui/statistics-card";
 
+import { useAuthData } from "../entities/auth-user/api/use-auth-token";
+import { sendSms } from "../entities/auth-user/api/send-sms.api";
+
+import { Button } from "../shared/button/button";
+
 const categories = [
     'Сантехника - Установка смесителя',
     'Замки - Вскрытие гаражей',
@@ -43,11 +48,18 @@ const categories = [
     'Мебель - Мебель для']
 
 export const ProfileScreen = () => {
+    const { removeToken } = useAuthData()
+
+    const handleLogout = () => {
+        removeToken()
+    }
+
     return (
         <div className="flex flex-col">
             <ProfileHeader name="Gaidar Timirbaev" phone="+998 99 999 99 99" city="Tashkent" />
             <CategoriesList categories={categories} />
             <StatisticsCard date="01.01.2024" applications={1000} totalEarned={300000} commission={88000} earned={212000} />
+            <Button label="go out" variant="default" onClick={handleLogout} />
         </div>
     )
 }

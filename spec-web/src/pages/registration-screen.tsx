@@ -2,16 +2,19 @@ import { ChangeEvent, useState, SyntheticEvent } from "react";
 import { Button } from "../shared/button/button";
 import { Input } from "../shared/input/input";
 import { useNavigate } from "react-router-dom";
-import { useRecieveCodeStore } from "../entities/auth-user/model/recieve-code-store";
-import { useRecieveCode } from "../entities/auth-user/api/use-recieve-code";
+import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
+import { useSendSms } from "../entities/auth-user/api/use-send-sms";
 import { inputMask } from "../shared/utils/inputMask";
+import { useAuthData } from "../entities/auth-user/api/use-auth-token";
 
 export const RegistrationScreen = () => {
-    const { phone, setPhone, submit, isLoading } = useRecieveCodeStore();
+    const { phone, setPhone, submit, isLoading } = useSendSmsStore();
     const [disabled, setDisabled] = useState<boolean>(true);
     const [rawPhone, setRawPhone] = useState<string>("");
-    const { mutate } = useRecieveCode();
+    const { mutate } = useSendSms();
     const navigate = useNavigate();
+
+    const { saveRequestId } = useAuthData()
 
 
     const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +24,9 @@ export const RegistrationScreen = () => {
     };
 
     const handleSubmit = (e: SyntheticEvent) => {
-        submit(e, mutate, navigate, rawPhone);
+        const phoneWithPlus = `+${rawPhone}`;
+        console.log(phoneWithPlus);
+        submit(e, mutate, navigate, phoneWithPlus, saveRequestId);
         setDisabled(true);
     };
 
