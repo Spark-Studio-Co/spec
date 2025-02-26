@@ -9,7 +9,10 @@ export const WebViewScreen = () => {
             <WebView
                 source={{ uri: "https://spec-six.vercel.app/" }}
                 javaScriptEnabled={true}
-                startInLoadingState={true}
+                domStorageEnabled={true}
+                sharedCookiesEnabled={true}
+                thirdPartyCookiesEnabled={true}
+                cacheEnabled={true}
             />
         </View>
     );
