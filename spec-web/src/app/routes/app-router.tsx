@@ -9,6 +9,7 @@ import '../styles/fonts.css'
 import '../styles/global.css'
 
 export const AppRouter = () => {
+    const { setAuth } = useAuthStore();
     const isAuth = useAuthStore((state) => state.isAuth);
     const [initialLoading, setInitialLoading] = useState<boolean>(true);
 
@@ -19,8 +20,12 @@ export const AppRouter = () => {
     }, []);
 
     useEffect(() => {
-        console.log("🚀 isAuth changed in AppRouter:", isAuth);
-    }, [isAuth]); // Track changes in isAuth
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+            console.log("🔓 Found stored token:", token);
+            setAuth(true);
+        }
+    }, []);
 
     if (initialLoading) {
         return <LoaderScreen />;

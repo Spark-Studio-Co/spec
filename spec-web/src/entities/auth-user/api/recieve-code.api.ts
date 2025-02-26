@@ -1,5 +1,5 @@
 import { apiClient } from "../../../app/config/apiClient";
-import { IRecieveCodeRDO } from "./auth-user.rdo";
+import { IRecieveCodeRDO } from "./rdo/auth-user.rdo";
 
 export const receiveCode = async (data: IRecieveCodeRDO) => {
     try {

@@ -5,9 +5,9 @@ import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
 import { useAuthStore } from "../app/model/use-auth-store";
 import { useRecieveCodeStore } from "../entities/auth-user/model/recieve-code-store";
 import { useSendCodeStore } from "../entities/auth-user/model/send-code-store";
+import { useAuthToken } from "../entities/auth-user/api/use-auth-token";
 
 import { useSendCode } from "../entities/auth-user/api/use-send-code";
-
 
 export const CodeConfirmationScreen = () => {
     const { mutate } = useSendCode()
@@ -17,6 +17,7 @@ export const CodeConfirmationScreen = () => {
     const [values, setValues] = useState<string[]>(Array(4).fill(''));
 
     const { setAuth } = useAuthStore()
+    const { saveToken } = useAuthToken()
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(4).fill(null));
 
@@ -43,9 +44,9 @@ export const CodeConfirmationScreen = () => {
         e.preventDefault();
         setDisabled(true);
 
-        submit(e, mutate, formattedValue, phone);
+        submit(e, mutate, formattedValue, phone, saveToken);
 
-        setTimeout(() => setAuth(true), 1000)
+        setTimeout(() => setAuth(true), 1500)
     };
 
 
