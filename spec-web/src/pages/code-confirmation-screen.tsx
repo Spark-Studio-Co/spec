@@ -26,16 +26,16 @@ export const CodeConfirmationScreen = () => {
     const [lastSmsTime, setLastSmsTime] = useState<number | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // ⏳ Cooldown Handling
     useEffect(() => {
         if (lastSmsTime) {
             const now = Date.now();
             const timeDiff = now - lastSmsTime;
 
-            if (timeDiff < 5 * 60 * 1000) { // 5 minutes
+            if (timeDiff < 5 * 60 * 1000) {
                 setErrorMessage("Слишком частое обращение, повторите попытку позже");
                 setDisabled(true);
             } else {
+                // ✅ Reset only after 5 minutes
                 setErrorMessage(null);
                 setDisabled(false);
                 setSmsAttempts(0);
@@ -66,8 +66,10 @@ export const CodeConfirmationScreen = () => {
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
 
-        if (smsAttempts >= 3) {
+        // ✅ First attempt should not show rate limit error
+        if (smsAttempts >= 3 && lastSmsTime) {
             setErrorMessage("Слишком частое обращение, повторите попытку позже");
+            setDisabled(true);
             return;
         }
 
@@ -100,7 +102,6 @@ export const CodeConfirmationScreen = () => {
                                 placeholder="X"
                                 value={values[index] || ""}
                                 onChange={handleSetValue(index)}
-
                             />
                         ))}
                     </div>
