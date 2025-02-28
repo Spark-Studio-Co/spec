@@ -8,7 +8,7 @@ import { inputMask } from "../shared/utils/inputMask";
 import { useAuthData } from "../entities/auth-user/api/use-auth-token";
 
 export const RegistrationScreen = () => {
-    const { phone, setPhone, submit, isLoading } = useSendSmsStore();
+    const { phone, setPhone, submit, isLoading, error } = useSendSmsStore();
     const [disabled, setDisabled] = useState<boolean>(true);
     const [rawPhone, setRawPhone] = useState<string>("");
     const { mutate } = useSendSms();
@@ -27,7 +27,7 @@ export const RegistrationScreen = () => {
         const phoneWithPlus = `+${rawPhone}`;
         console.log(phoneWithPlus);
         submit(e, mutate, navigate, phoneWithPlus, saveRequestId);
-        setDisabled(true);
+        error ? setDisabled(false) : setDisabled(true);
     };
 
     return (
@@ -48,6 +48,7 @@ export const RegistrationScreen = () => {
                     onChange={handlePhoneChange}
                 />
             </div>
+            <span className="text-red-500 mt-2 w-full items-center justify-center flex">{error && "Данный номер не зарегестрирован в Telegram"}</span>
             <Button
                 variant={disabled ? 'disabled' : 'default'}
                 label={isLoading ? 'Отправка...' : 'Отправить SMS'}
