@@ -1,33 +1,39 @@
 import { SingleValueInput } from "../shared/single-value-input/single-value-input";
 import { Button } from "../shared/button/button";
 import { ChangeEvent, SyntheticEvent, useRef, useState, useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
 import { useAuthStore } from "../app/model/use-auth-store";
 import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 import { useVerifySmsStore } from "../entities/auth-user/model/verify-sms-store";
-import { useAuthData } from "../entities/auth-user/api/use-auth-token";
+import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 
 import { useSendCode } from "../entities/auth-user/api/use-verify-sms";
 
+import BackArrowIcon from "../shared/assets/icons/back-arrow-icon";
+
 export const CodeConfirmationScreen = () => {
+    const handleBack = () => {
+        navigate({ to: '/' });
+    };
     const { mutate } = useSendCode();
     const { submit, isLoading } = useVerifySmsStore();
     const { phone } = useSendSmsStore();
     const [disabled, setDisabled] = useState<boolean>(true);
     const [values, setValues] = useState<string[]>(Array(6).fill(""));
+    const navigate = useNavigate();
 
     const { setAuth } = useAuthStore();
     const { saveToken, requestId } = useAuthData();
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(6).fill(null));
 
-    // ⏳ State for Rate Limiting
     const [smsAttempts, setSmsAttempts] = useState<number>(0);
     const [lastSmsTime, setLastSmsTime] = useState<number | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
-        if (lastSmsTime) {
+        if (lastSmsTime && smsAttempts >= 3) {
             const now = Date.now();
             const timeDiff = now - lastSmsTime;
 
@@ -35,13 +41,14 @@ export const CodeConfirmationScreen = () => {
                 setErrorMessage("Слишком частое обращение, повторите попытку позже");
                 setDisabled(true);
             } else {
-                // ✅ Reset only after 5 minutes
                 setErrorMessage(null);
                 setDisabled(false);
                 setSmsAttempts(0);
             }
         }
-    }, [lastSmsTime]);
+    }, [lastSmsTime, smsAttempts]);
+
+
 
     const handleSetValue = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -66,22 +73,39 @@ export const CodeConfirmationScreen = () => {
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
 
-        // ✅ First attempt should not show rate limit error
         if (smsAttempts >= 3 && lastSmsTime) {
-            setErrorMessage("Слишком частое обращение, повторите попытку позже");
-            setDisabled(true);
-            return;
+            const now = Date.now();
+            const timeDiff = now - lastSmsTime;
+
+            if (timeDiff < 5 * 60 * 1000) {
+                setErrorMessage("Слишком частое обращение, повторите попытку позже");
+                setDisabled(true);
+                return;
+            }
         }
 
         setDisabled(true);
         setSmsAttempts(prev => prev + 1);
         setLastSmsTime(Date.now());
 
-        submit(e, mutate, formattedValue, phone, requestId!, saveToken, setAuth);
+        const handleSuccessfulAuth = (value: boolean) => {
+            setAuth(value);
+            if (value) {
+                navigate({ to: '/app' });
+            }
+        };
+
+        submit(e, mutate, formattedValue, phone, requestId!, saveToken, handleSuccessfulAuth);
     };
 
     return (
-        <form className="flex flex-col justify-between h-full" onSubmit={handleSubmit}>
+        <form className="flex flex-col justify-between h-[90%]" onSubmit={handleSubmit}>
+            <button
+                onClick={handleBack}
+                className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-0 top-10 flex items-center justify-center"
+            >
+                <BackArrowIcon />
+            </button>
             <div className="flex flex-col">
                 <span className="text-dark font-semibold text-[24px] leading-[28px]">
                     Мы отправили SMS на номер
@@ -89,7 +113,6 @@ export const CodeConfirmationScreen = () => {
                 <span className="text-[20px] text-dark font-normal leading-[28px] mt-3">
                     {phone}
                 </span>
-
                 <div className="w-full mt-8">
                     <span className="text-dark font-medium text-[16px] leading-[28px] w-full items-center justify-center flex mb-2">
                         Для ввода кода перейдите в Telegram

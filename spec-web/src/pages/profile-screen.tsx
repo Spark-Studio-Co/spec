@@ -1,10 +1,10 @@
 import { CategoriesList } from "../features/categories-list/ui/categories-list";
 import { ProfileHeader } from "../features/profile-header/ui/profile-header";
 import { StatisticsCard } from "../features/statistics-card/ui/statistics-card";
-
-import { useAuthData } from "../entities/auth-user/api/use-auth-token";
-
 import { Button } from "../shared/button/button";
+
+import { useAuthData } from "../entities/auth-user/api/use-auth-data";
+import { useNavigate } from "@tanstack/react-router";
 
 const categories = [
     'Сантехника - Установка смесителя',
@@ -48,16 +48,39 @@ const categories = [
 
 export const ProfileScreen = () => {
     const { removeToken } = useAuthData()
+    const navigate = useNavigate()
 
     const handleLogout = () => {
-        removeToken()
-    }
+        // Remove the token which will trigger a re-render in the root route
+        removeToken();
+        
+        // Navigate to the root path
+        navigate({ to: '/', replace: true });
+    };
 
     return (
         <div className="flex flex-col">
             <ProfileHeader name="Gaidar Timirbaev" phone="+998 99 999 99 99" city="Tashkent" />
             <CategoriesList categories={categories} />
-            <StatisticsCard date="01.01.2024" applications={1000} totalEarned={300000} commission={88000} earned={212000} />
+            <StatisticsCard
+                date="01.01.2025"
+                applications={1000}
+                totalEarned={300000}
+                commission={88000}
+                earned={212000}
+                onDateChange={(date) => {
+                    if (date) {
+                        const formattedDate = date.toLocaleDateString('ru-RU', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        })
+                        console.log('Selected date:', formattedDate)
+                    } else {
+                        console.log('Date selection cleared')
+                    }
+                }}
+            />
             <Button label="Выйти" variant="red" onClick={handleLogout} className="mt-8" />
         </div>
     )

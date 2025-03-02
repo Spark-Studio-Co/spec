@@ -10,12 +10,14 @@ import NavigationIcon from "../../../shared/assets/icons/navigation-icon"
 import PhoneIcon from "../../../shared/assets/icons/phone-icon"
 
 interface IApplicationCard {
+    id: number
     title: string,
     description: string,
-    price: string,
-    comission: string
+    price_min: string,
+    price_max: string,
+    commission: string
     phone: string
-    date: string
+    execute_at: string
     address: string
     status?: string
     onClick?: () => void
@@ -25,7 +27,7 @@ interface IApplicationCard {
     isPaid?: boolean
 }
 
-export const ApplicationCard = ({ title, description, price, comission, phone, date, address, onClick, onRefund, onReject, index, isPaid }: IApplicationCard) => {
+export const ApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, onRefund, onReject, index, isPaid }: IApplicationCard) => {
     const popupStore = usePopupStore('phone-popup')
     const { taken } = useTakenApplicationStore()
     const { execution } = useExecutionApplicationStore()
@@ -38,21 +40,32 @@ export const ApplicationCard = ({ title, description, price, comission, phone, d
         popupStore.open()
     }
 
+
+    const isoDate = execute_at;
+    const humanReadable = new Intl.DateTimeFormat("ru-RU", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC"
+    }).format(new Date(isoDate));
+
     return (
-        <div className="w-full min-h-[234px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px]">
+        <div className="w-full min-h-[234px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer">
             <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
-            <div className="flex flex-row items-center mt-2 mb-3 gap-x-2">
-                <span className="font-[600] text-[16px] text-dark">{price}</span>
-                <span className="text-[14px] font-[400] text-dark">{comission}</span>
+            <div className="flex flex-row items-center mt-2 gap-x-2">
+                <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
+                <span className="text-[14px] font-[400] text-dark">Комиссия {parseInt(price_min) / parseInt(commission)} - {parseInt(price_max) / parseInt(commission)} ₸</span>
             </div>
-            <div className="flex flex-row items-center gap-x-1.5" onClick={handlePhoneClick}>
+            {isTaken && <div className="flex flex-row items-center mt-3 gap-x-1.5" onClick={handlePhoneClick}>
                 <PhoneIcon />
                 <a className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>
-            </div>
-            <div className="flex flex-row items-center mt-2.5 gap-x-1">
+            </div>}
+            <div className="flex flex-row items-center mt-1.5 gap-x-1">
                 <ClockIcon />
-                <span className="text-[16px] text-[#262626] font-[400]">{date}</span>
+                <span className="text-[16px] text-[#262626] font-[400]">{humanReadable}</span>
             </div>
             <div className="flex flex-row items-center mt-2 gap-x-1">
                 <NavigationIcon />

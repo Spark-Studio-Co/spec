@@ -1,4 +1,5 @@
 import { useState } from "react";
+import reactQueryClient from "../../../app/api/query-client";
 
 export const useAuthData = () => {
     const [token, setToken] = useState<string | null>(() => {
@@ -21,6 +22,13 @@ export const useAuthData = () => {
         console.log("🚪 ReqId removed, user logged out!");
     };
 
+    const loadToken = () => {
+        const storedToken = localStorage.getItem('auth_token');
+        if (storedToken) {
+            setToken(storedToken);
+        }
+    }
+
     const saveToken = (newToken: string) => {
         localStorage.setItem("auth_token", newToken);
         setToken(newToken);
@@ -29,9 +37,11 @@ export const useAuthData = () => {
 
     const removeToken = () => {
         localStorage.removeItem("auth_token");
+        reactQueryClient.resetQueries();
+        reactQueryClient.clear();
         setToken(null);
         console.log("🚪 Token removed, user logged out!");
     };
 
-    return { token, saveToken, removeToken, requestId, saveRequestId, removeRequestId };
+    return { token, saveToken, removeToken, requestId, saveRequestId, removeRequestId, loadToken };
 };

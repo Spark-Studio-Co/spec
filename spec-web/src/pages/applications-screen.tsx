@@ -1,125 +1,145 @@
-import { useState } from 'react'
-import { ApplicationCard } from "../features/application-card/ui/application-card"
-import { Popup } from "../widgets/popup/popup"
+import { useState } from "react";
+import { ApplicationCard } from "../features/application-card/ui/application-card";
+import { Popup } from "../widgets/popup/popup";
 
-import { usePopupStore } from "../shared/model/popup-store"
-import { useTakenApplicationStore } from "../features/application-card/model/taken-application-store"
-import { useExecutionApplicationStore } from "../features/application-card/model/execution-application-store"
+import { usePopupStore } from "../shared/model/popup-store";
+import { useTakenApplicationStore } from "../features/application-card/model/taken-application-store";
+import { useExecutionApplicationStore } from "../features/application-card/model/execution-application-store";
+import { useGetApplications } from "../entities/application/api/use-get-applications";
+
+import { useChangeStatus } from "../entities/application/api/use-change-status";
+import { IChangeStatusRDO } from "../entities/application/api/rdo/change-status.rdo";
 
 export const ApplicationScreen = () => {
+    const [refundReason, setRefundReason] = useState<string>("")
+    const [denyReason, setDenyReason] = useState<string>("")
 
-    const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore('phone-popup')
-    const { isOpen: isOpenTaken, open: openTakenPopup } = usePopupStore('taken-popup')
-    const { isOpen: isOpenExecution, open: openExecutionPopup, close: closeExecutionPopup } = usePopupStore('execution-popup')
-    const { isOpen: isOpenComplete, open: openCompletePopup, close: closeCompletePopup } = usePopupStore('complete-popup')
-    const { isOpen: isOpenRefund, open: openRefundPopup, close: closeRefundPopup } = usePopupStore('refund-popup')
-    const { isOpen: isOpenReject, open: openRejectPopup, close: closeRejectPopup } = usePopupStore('reject-popup')
+    const { mutate } = useChangeStatus()
 
-    const { setTaken, taken, removeTaken } = useTakenApplicationStore()
-    const { setExecution, execution, closeExecution } = useExecutionApplicationStore()
+    const { data: applications, isLoading, error } = useGetApplications();
 
-    const applications = [
-        {
-            title: 'Двухкомнатная квартира',
-            description: 'Площадь 54м2, 2/5 этаж, 2 спальни, 1 ванная',
-            price: '15 000 000',
-            comission: '10%',
-            phone: '+7 (495) 123-45-67',
-            date: '12.02.2023',
-            address: 'г. Москва, ул. Ленина, д. 12'
-        },
-        {
-            title: 'Трехкомнатная квартира',
-            description: 'Площадь 90м2, 5/9 этаж, 3 спальни, 1 ванная',
-            price: '20 000 000',
-            comission: '10%',
-            phone: '+7 (495) 123-45-67',
-            date: '22.02.2023',
-            address: 'г. Москва, ул. Ленина, д. 12'
-        },
-        {
-            title: 'Двухкомнатная квартира',
-            description: 'Площадь 54м2, 2/5 этаж, 2 спальни, 1 ванная',
-            price: '15 000 000',
-            comission: '10%',
-            phone: '+7 (495) 123-45-67',
-            date: '12.02.2023',
-            address: 'г. Москва, ул. Ленина, д. 12'
-        },
-        {
-            title: 'Трехкомнатная квартира',
-            description: 'Площадь 90м2, 5/9 этаж, 3 спальни, 1 ванная',
-            price: '20 000 000',
-            comission: '10%',
-            phone: '+7 (495) 123-45-67',
-            date: '22.02.2023',
-            address: 'г. Москва, ул. Ленина, д. 12'
-        }
-    ]
+    const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore("phone-popup");
+    const { isOpen: isOpenTaken, open: openTakenPopup } = usePopupStore("taken-popup");
+    const { isOpen: isOpenExecution, open: openExecutionPopup, close: closeExecutionPopup } = usePopupStore("execution-popup");
+    const { isOpen: isOpenComplete, open: openCompletePopup, close: closeCompletePopup } = usePopupStore("complete-popup");
+    const { isOpen: isOpenRefund, open: openRefundPopup, close: closeRefundPopup } = usePopupStore("refund-popup");
+    const { isOpen: isOpenReject, open: openRejectPopup, close: closeRejectPopup } = usePopupStore("reject-popup");
+
+    const { setTaken, taken, removeTaken } = useTakenApplicationStore();
+    const { setExecution, execution, closeExecution } = useExecutionApplicationStore();
+
+    const [currentCard, setCurrentCard] = useState<number | null>(null);
+
+    if (isLoading) return <p className="text-center">Загрузка заявок...</p>;
+    if (error) return <p className="text-red-500 text-center">Ошибка: {error.message}</p>;
 
     const handleTakeApplication = (index: number, phone: string) => {
-        if (taken.includes(index)) return
+        if (taken.includes(index)) return;
         if (taken.length >= 1) {
-            openTakenPopup()
-            return
+            openTakenPopup();
+            return;
         }
-        setPhoneValue(phone)
-        openPhonePopup()
-        setTaken(index)
-    }
-
-    const [currentCard, setCurrentCard] = useState<number | null>(null)
+        setPhoneValue(phone);
+        openPhonePopup();
+        setTaken(index);
+    };
 
     const handleStartExecution = () => {
-        if (currentCard !== null) {
-            setExecution(currentCard)
-            setCurrentCard(null)
-            closeExecutionPopup()
+        if (currentCard !== null && applications) {
+            handleChangeStatus(applications[currentCard].id, { status_id: 3 })
+            setExecution(currentCard);
+            setCurrentCard(null);
+            closeExecutionPopup();
         }
     }
 
+    const takenApplication = applications?.[taken[0]];
 
-    const takenApplication = applications[taken[0]]
+    const handleChangeStatus = (task_id: number, status: IChangeStatusRDO) => {
+        mutate(
+            { data: status, task_id },
+            {
+                onSuccess: () => console.log("Status successfully updated"),
+                onError: (error) => console.error("Error:", error.message)
+            }
+        );
+    }
 
+    const reloadPage = () => {
+        window.location.reload();
+    }
+
+    const handleRefund = () => {
+        if (currentCard !== null && applications) {
+            handleChangeStatus(applications[currentCard].id, { status_id: 4, comment: refundReason })
+            closeExecution();
+            setTimeout(() => reloadPage(), 1500)
+        }
+    }
+
+    const handleClientDeny = () => {
+        if (currentCard !== null && applications) {
+            handleChangeStatus(applications[currentCard].id, { status_id: 5, comment: denyReason })
+            closeExecution();
+            setTimeout(() => reloadPage(), 1500)
+        }
+    }
+
+    const handleComplete = () => {
+        if (currentCard !== null && applications) {
+            handleChangeStatus(applications[currentCard].id, { status_id: 6 })
+            closeExecution();
+            setTimeout(() => reloadPage(), 1500)
+        }
+    }
 
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {applications.map((application, index) => (
-                    <ApplicationCard
-                        key={index}
-                        {...application}
-                        index={index}
-                        onReject={() => {
-                            setCurrentCard(index)
-                            openRejectPopup()
-                        }}
-                        onRefund={() => {
-                            setCurrentCard(index)
-                            openRefundPopup()
-                        }}
-                        onClick={() => {
-                            if (execution === index) {
-                                setCurrentCard(index)
-                                openCompletePopup()
-                            } else if (taken.includes(index)) {
-                                setCurrentCard(index)
-                                openExecutionPopup()
-                            } else {
-                                handleTakeApplication(index, application.phone)
-                            }
-                        }}
-                    />
-                ))}
-            </div>
+                {applications?.map((application: any, index: number) => {
+                    const isTaken = taken.includes(index);
+                    const isExecuting = execution === index;
 
+                    return (
+                        <ApplicationCard
+                            key={index}
+                            {...application}
+                            index={index}
+                            onReject={() => {
+                                setCurrentCard(index);
+                                openRejectPopup();
+                            }}
+                            onRefund={() => {
+                                setCurrentCard(index);
+                                openRefundPopup();
+                            }}
+                            onClick={() => {
+                                if (isExecuting) {
+                                    setCurrentCard(index);
+                                    openCompletePopup();
+                                } else if (isTaken) {
+                                    setCurrentCard(index);
+                                    openExecutionPopup();
+                                } else if (taken.length >= 1) {
+                                    openTakenPopup();
+                                } else {
+                                    handleChangeStatus(application.id, { status_id: 2 })
+                                    handleTakeApplication(index, application.phone);
+                                }
+                            }}
+                        />
+                    );
+                })}
+            </div>
 
             {isOpen && (
                 <Popup
                     title="Звонок клиенту"
                     storeKey="phone-popup"
                     actionLabel={passedValue || "Продолжить"}
-                    onClick={() => { window.location.href = `tel:${passedValue}` }}
+                    onClick={() => {
+                        window.location.href = `tel:${passedValue}`;
+                    }}
                 />
             )}
 
@@ -151,10 +171,10 @@ export const ApplicationScreen = () => {
                     actionLabel="Да"
                     onClick={() => {
                         if (currentCard !== null) {
-                            removeTaken(currentCard)
-                            closeExecution()
-                            setCurrentCard(null)
-                            closeCompletePopup()
+                            handleComplete()
+                            removeTaken(currentCard);
+                            setCurrentCard(null);
+                            closeCompletePopup();
                         }
                     }}
                 />
@@ -169,12 +189,14 @@ export const ApplicationScreen = () => {
                     actionLabel="Отправить"
                     isInput={true}
                     inputPlaceholder="Причина возврата"
+                    inputValue={refundReason}
+                    setInputValue={setRefundReason}
                     onClick={(reason) => {
                         if (currentCard !== null && reason) {
-                            removeTaken(currentCard)
-                            closeExecution()
-                            setCurrentCard(null)
-                            closeRefundPopup()
+                            handleRefund()
+                            removeTaken(currentCard);
+                            setCurrentCard(null);
+                            closeRefundPopup();
                         }
                     }}
                 />
@@ -182,6 +204,8 @@ export const ApplicationScreen = () => {
 
             {isOpenReject && (
                 <Popup
+                    inputValue={denyReason}
+                    setInputValue={setDenyReason}
                     isCenter={false}
                     title="Укажите причину отказа клиента"
                     storeKey="reject-popup"
@@ -191,14 +215,15 @@ export const ApplicationScreen = () => {
                     inputPlaceholder="Причина отказа"
                     onClick={(reason) => {
                         if (currentCard !== null && reason) {
-                            removeTaken(currentCard)
-                            closeExecution()
-                            setCurrentCard(null)
-                            closeRejectPopup()
+                            handleClientDeny()
+                            removeTaken(currentCard);
+                            setCurrentCard(null);
+                            closeRejectPopup();
                         }
                     }}
                 />
             )}
         </>
-    )
-}
+    );
+};
+

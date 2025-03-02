@@ -11,6 +11,7 @@ export const SingleValueInput = forwardRef<HTMLInputElement, ISingleValueInput>(
                 {...props}
                 className="w-[100%] h-[50px] rounded-[8px] flex items-center justify-center border border-[#737373] text-center placeholder:text-center outline-none uppercase"
                 maxLength={1}
+                type="tel"
             />
         );
     }

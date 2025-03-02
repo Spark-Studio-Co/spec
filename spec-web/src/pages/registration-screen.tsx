@@ -1,11 +1,11 @@
 import { ChangeEvent, useState, SyntheticEvent } from "react";
 import { Button } from "../shared/button/button";
 import { Input } from "../shared/input/input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 import { useSendSms } from "../entities/auth-user/api/use-send-sms";
 import { inputMask } from "../shared/utils/inputMask";
-import { useAuthData } from "../entities/auth-user/api/use-auth-token";
+import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 
 export const RegistrationScreen = () => {
     const { phone, setPhone, submit, isLoading, error } = useSendSmsStore();
@@ -26,12 +26,12 @@ export const RegistrationScreen = () => {
     const handleSubmit = (e: SyntheticEvent) => {
         const phoneWithPlus = `+${rawPhone}`;
         console.log(phoneWithPlus);
-        submit(e, mutate, navigate, phoneWithPlus, saveRequestId);
+        submit(e, mutate, () => navigate({ to: '/code-confirmation' }), phoneWithPlus, saveRequestId);
         error ? setDisabled(false) : setDisabled(true);
     };
 
     return (
-        <form className="flex flex-col justify-between h-full" onSubmit={handleSubmit}>
+        <form className="flex flex-col justify-between h-[90%]" onSubmit={handleSubmit}>
             <div className="flex flex-col">
                 <span className="text-dark font-semibold text-[24px] leading-[28px]">
                     Введите номер телефона

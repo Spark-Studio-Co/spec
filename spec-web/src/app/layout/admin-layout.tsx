@@ -1,8 +1,7 @@
 import { Outlet } from "@tanstack/react-router"
 import { BottomPanel } from "../../features/bottom-navigation/ui/bottom-panel/bottom-panel"
 
-
-export const Layout = () => {
+export const AdminLayout = () => {
     return (
         <>
             <div className="min-h-[100vh] bg-[#F5F5F5] px-4">

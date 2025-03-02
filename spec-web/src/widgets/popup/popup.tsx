@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from "../../shared/button/button";
 import { usePopupStore } from "../../shared/model/popup-store";
 
@@ -11,11 +10,12 @@ interface IPopup {
     onClick?: (inputValue?: string) => void
     isInput?: boolean
     inputPlaceholder?: string
+    inputValue?: string
+    setInputValue?: (inputValue: string) => void
 }
 
-export const Popup = ({ title, isCenter = true, closeLabel = "Закрыть", actionLabel = "Продолжить", storeKey, onClick, isInput, inputPlaceholder }: IPopup) => {
+export const Popup = ({ inputValue, setInputValue, title, isCenter = true, closeLabel = "Закрыть", actionLabel = "Продолжить", storeKey, onClick, isInput, inputPlaceholder }: IPopup) => {
     const { close } = usePopupStore(storeKey)
-    const [inputValue, setInputValue] = useState('')
 
     return (
         <div className="fixed inset-0 bg-[#0000004D] flex items-center justify-center z-50">
@@ -26,17 +26,17 @@ export const Popup = ({ title, isCenter = true, closeLabel = "Закрыть", a
                         className="w-full px-4 py-3 border border-[#737373] rounded-[8px] mb-4 outline-none h-[88px]"
                         placeholder={inputPlaceholder}
                         value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
+                        onChange={setInputValue ? (e) => setInputValue(e.target.value) : undefined}
                     />
                 )}
                 <Button variant="transparent" label={closeLabel} onClick={close} height="h-[48px]" />
                 <Button
                     label={actionLabel}
-                    variant={isInput && !inputValue.trim() ? "disabled" : "default"}
+                    variant={isInput && !inputValue?.trim() ? "disabled" : "default"}
                     onClick={() => onClick?.(isInput ? inputValue : undefined)}
                     height="h-[48px]"
                     className="mt-2 mb-6"
-                    disabled={isInput && !inputValue.trim()}
+                    disabled={isInput && !inputValue?.trim()}
                 />
             </div>
         </div>
