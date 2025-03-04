@@ -1,7 +1,7 @@
 import { ChangeEvent, useState, SyntheticEvent } from "react";
 import { Button } from "../shared/button/button";
 import { Input } from "../shared/input/input";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "react-router";
 import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 import { useSendSms } from "../entities/auth-user/api/use-send-sms";
 import { inputMask } from "../shared/utils/inputMask";
@@ -24,9 +24,11 @@ export const RegistrationScreen = () => {
     };
 
     const handleSubmit = (e: SyntheticEvent) => {
+        e.preventDefault();
         const phoneWithPlus = `+${rawPhone}`;
         console.log(phoneWithPlus);
-        submit(e, mutate, () => navigate({ to: '/code-confirmation' }), phoneWithPlus, saveRequestId);
+        submit(e, mutate, () => navigate('/code-confirmation'), phoneWithPlus, saveRequestId);
+        setDisabled(false)
         error ? setDisabled(false) : setDisabled(true);
     };
 

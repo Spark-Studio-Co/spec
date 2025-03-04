@@ -12,7 +12,7 @@ interface IVerifySmsStore {
         phone: string,
         request_id: string,
         saveToken: (token: string) => void,
-        setAuth: (value: boolean) => void // Pass setAuth as a function
+        navigate: () => void
     ) => void;
 }
 
@@ -20,7 +20,7 @@ export const useVerifySmsStore = create<IVerifySmsStore>((set) => ({
     token: '',
     isLoading: false,
     error: null,
-    submit: async (e, mutate, code, phone, request_id, saveToken, setAuth) => {
+    submit: async (e, mutate, code, phone, request_id, saveToken, navigate) => {
         e.preventDefault();
         set({ isLoading: true, error: null });
 
@@ -31,7 +31,7 @@ export const useVerifySmsStore = create<IVerifySmsStore>((set) => ({
                     if (data?.token) {
                         console.log("✅ Token received:", data.token);
                         saveToken(data.token);
-                        setTimeout(() => setAuth(true), 1500);
+                        navigate()
                     } else {
                         console.warn("⚠️ No token received in response!");
                         set({ error: "Неверный код подтверждения", isLoading: false });

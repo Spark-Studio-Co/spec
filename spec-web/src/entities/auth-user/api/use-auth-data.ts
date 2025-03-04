@@ -13,26 +13,22 @@ export const useAuthData = () => {
     const saveRequestId = (requestId: string) => {
         localStorage.setItem('requestId', requestId);
         setRequestId(requestId);
-        console.log("🔒 RequestId stored:", requestId);
     }
 
     const removeRequestId = () => {
         localStorage.removeItem("requestId");
         setRequestId(null);
-        console.log("🚪 ReqId removed, user logged out!");
     };
 
-    const loadToken = () => {
+    const loadToken = async () => {
         const storedToken = localStorage.getItem('auth_token');
-        if (storedToken) {
-            setToken(storedToken);
-        }
+        setToken(storedToken);
+        return storedToken;
     }
 
     const saveToken = (newToken: string) => {
         localStorage.setItem("auth_token", newToken);
         setToken(newToken);
-        console.log("🔒 Token stored:", newToken);
     };
 
     const removeToken = () => {
@@ -40,7 +36,6 @@ export const useAuthData = () => {
         reactQueryClient.resetQueries();
         reactQueryClient.clear();
         setToken(null);
-        console.log("🚪 Token removed, user logged out!");
     };
 
     return { token, saveToken, removeToken, requestId, saveRequestId, removeRequestId, loadToken };

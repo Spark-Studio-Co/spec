@@ -1,9 +1,8 @@
 import { SingleValueInput } from "../shared/single-value-input/single-value-input";
 import { Button } from "../shared/button/button";
 import { ChangeEvent, SyntheticEvent, useRef, useState, useEffect } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "react-router";
 
-import { useAuthStore } from "../app/model/use-auth-store";
 import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 import { useVerifySmsStore } from "../entities/auth-user/model/verify-sms-store";
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
@@ -14,7 +13,7 @@ import BackArrowIcon from "../shared/assets/icons/back-arrow-icon";
 
 export const CodeConfirmationScreen = () => {
     const handleBack = () => {
-        navigate({ to: '/' });
+        navigate('/');
     };
     const { mutate } = useSendCode();
     const { submit, isLoading } = useVerifySmsStore();
@@ -23,8 +22,7 @@ export const CodeConfirmationScreen = () => {
     const [values, setValues] = useState<string[]>(Array(6).fill(""));
     const navigate = useNavigate();
 
-    const { setAuth } = useAuthStore();
-    const { saveToken, requestId } = useAuthData();
+    const { saveToken, requestId, removeRequestId } = useAuthData();
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(6).fill(null));
 
@@ -88,14 +86,11 @@ export const CodeConfirmationScreen = () => {
         setSmsAttempts(prev => prev + 1);
         setLastSmsTime(Date.now());
 
-        const handleSuccessfulAuth = (value: boolean) => {
-            setAuth(value);
-            if (value) {
-                navigate({ to: '/app' });
-            }
-        };
+        submit(e, mutate, formattedValue, phone, requestId!, saveToken, () => {
+            navigate('/application');
+            setTimeout(() => removeRequestId(), 1500);
+        });
 
-        submit(e, mutate, formattedValue, phone, requestId!, saveToken, handleSuccessfulAuth);
     };
 
     return (

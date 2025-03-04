@@ -1,17 +1,17 @@
 import { ReactElement } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link } from 'react-router'
 
 
 const getRoutePath = (link: string) => {
     switch (link) {
         case 'archive':
-            return '/app/archive' as const
+            return '/archive' as const
         case 'profile':
-            return '/app/profile' as const
+            return '/profile' as const
         case 'admin-applications':
-            return '/app/admin-applications' as const
+            return '/admin-applications' as const
         default:
-            return '/app' as const
+            return '/application' as const
     }
 }
 
@@ -27,8 +27,6 @@ export const BottomTab = ({ label, icon, isActive, setActiveTab, link }: IBottom
     return (
         <Link
             to={getRoutePath(link)}
-            activeProps={{ className: 'text-main' }}
-            inactiveProps={{ className: 'text-[#737373]' }}
         >
             <div className='flex flex-col items-center gap-y-1.5' onClick={() => setActiveTab(label)}>
                 {icon}

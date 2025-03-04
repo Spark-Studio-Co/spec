@@ -2,14 +2,12 @@ import { Input } from '../shared/input/input'
 import { Button } from '../shared/button/button'
 import { SyntheticEvent } from 'react';
 
-import { useAuthStore } from '../app/model/use-auth-store';
 import { useLoginStore } from '../entities/login/model/login-store';
 import { useNavigate } from '@tanstack/react-router';
 import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 
 export const AdminLogin = () => {
     const { login, password, setLogin, setPassword } = useLoginStore()
-    const { setAuth } = useAuthStore();
     const { saveToken } = useAuthData();
     const navigate = useNavigate();
 
@@ -24,7 +22,6 @@ export const AdminLogin = () => {
         // Set a temporary token for demo purposes
         const tempToken = 'admin-token';
         saveToken(tempToken);
-        setAuth(true);
 
         setLogin('');
         setPassword('');

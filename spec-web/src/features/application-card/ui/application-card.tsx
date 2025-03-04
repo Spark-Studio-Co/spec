@@ -8,6 +8,7 @@ import { useExecutionApplicationStore } from "../model/execution-application-sto
 import ClockIcon from "../../../shared/assets/icons/clock-icon"
 import NavigationIcon from "../../../shared/assets/icons/navigation-icon"
 import PhoneIcon from "../../../shared/assets/icons/phone-icon"
+import { useState } from "react"
 
 interface IApplicationCard {
     id: number
@@ -32,6 +33,12 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
     const { taken } = useTakenApplicationStore()
     const { execution } = useExecutionApplicationStore()
 
+    const [clicked, setClicked] = useState<boolean>(false)
+
+    const handleClicked = (clicked: boolean) => {
+        setClicked(!clicked)
+    }
+
     const isTaken = taken.includes(index)
     const isExecuting = execution === index
 
@@ -52,7 +59,7 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
     }).format(new Date(isoDate));
 
     return (
-        <div className="w-full min-h-[234px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer">
+        <div className="w-full min-h-[80px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer" onClick={() => handleClicked(clicked)}>
             <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
@@ -85,7 +92,7 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
                     <Button label="Отказ клиента" variant="red" height="h-[36px]" onClick={onReject} />
                 </div>
             }
-            <Button label={isExecuting ? 'Выполнить' : isTaken ? 'Начать исполнять' : 'Взять'} variant={isExecuting ? "green" : "default"} height="h-[36px]" className={`${isTaken ? 'mt-2' : 'mt-5'}`} onClick={onClick} />
+            {clicked && <Button label={isExecuting ? 'Выполнить' : isTaken ? 'Начать исполнять' : 'Взять'} variant={isExecuting ? "green" : "default"} height="h-[36px]" className={`${isTaken ? 'mt-2' : 'mt-5'}`} onClick={onClick} />}
         </div>
     )
 }
