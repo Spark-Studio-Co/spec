@@ -5,5 +5,5 @@ export interface ISendSmsRDO {
 export interface IVerifySmsRDO {
     phone: string
     code: string
-    requet_id: string
+    request_id: string
 }

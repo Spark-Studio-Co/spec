@@ -4,8 +4,6 @@ import { StatisticsCard } from "../features/statistics-card/ui/statistics-card";
 import { Button } from "../shared/button/button";
 
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
-import { useNavigate } from "react-router";
-import { MainLayout } from "../app/layout/main-layout";
 
 const categories = [
     'Сантехника - Установка смесителя',
@@ -49,14 +47,10 @@ const categories = [
 
 export const ProfileScreen = () => {
     const { removeToken } = useAuthData()
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
 
     const handleLogout = () => {
-        // Remove the token which will trigger a re-render in the root route
         removeToken();
-
-        // Navigate to the root path
-        navigate('/', { replace: true });
     };
 
     return (

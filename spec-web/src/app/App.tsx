@@ -22,6 +22,7 @@ import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 import "./styles/global.css";
 import "./styles/fonts.css";
 
+
 function App() {
   const [loading, setLoading] = useState(true);
   const { token, loadToken } = useAuthData();
@@ -29,7 +30,7 @@ function App() {
   useEffect(() => {
     const checkToken = async () => {
       await loadToken()
-      if (!!token) { console.log('Token is null') }
+      if (!token) { console.log('Token is null') }
     }
     checkToken()
   }, [loadToken])

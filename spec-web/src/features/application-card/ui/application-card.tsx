@@ -30,14 +30,11 @@ interface IApplicationCard {
 
 export const ApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, onRefund, onReject, index, isPaid }: IApplicationCard) => {
     const popupStore = usePopupStore('phone-popup')
+    const [showButton, setShowButton] = useState<boolean>(false)
     const { taken } = useTakenApplicationStore()
     const { execution } = useExecutionApplicationStore()
 
-    const [clicked, setClicked] = useState<boolean>(false)
 
-    const handleClicked = (clicked: boolean) => {
-        setClicked(!clicked)
-    }
 
     const isTaken = taken.includes(index)
     const isExecuting = execution === index
@@ -59,7 +56,14 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
     }).format(new Date(isoDate));
 
     return (
-        <div className="w-full min-h-[80px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer" onClick={() => handleClicked(clicked)}>
+        <div
+            className="w-full min-h-[80px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer"
+            onClick={(e) => {
+                if (e.target === e.currentTarget || e.target instanceof Element && e.currentTarget.contains(e.target) && !e.target.closest('button, a')) {
+                    setShowButton(!showButton);
+                }
+            }}
+        >
             <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
@@ -92,7 +96,18 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
                     <Button label="Отказ клиента" variant="red" height="h-[36px]" onClick={onReject} />
                 </div>
             }
-            {clicked && <Button label={isExecuting ? 'Выполнить' : isTaken ? 'Начать исполнять' : 'Взять'} variant={isExecuting ? "green" : "default"} height="h-[36px]" className={`${isTaken ? 'mt-2' : 'mt-5'}`} onClick={onClick} />}
+            {showButton && (
+                <Button
+                    label={isExecuting ? 'Выполнить' : isTaken ? 'Начать исполнять' : 'Взять'}
+                    variant={isExecuting ? "green" : "default"}
+                    height="h-[36px]"
+                    className={`${isTaken ? 'mt-2' : 'mt-5'}`}
+                    onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click when clicking button
+                        onClick?.();
+                    }}
+                />
+            )}
         </div>
     )
 }

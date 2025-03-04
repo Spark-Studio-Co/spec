@@ -28,7 +28,7 @@ export const CodeConfirmationScreen = () => {
     const [values, setValues] = useState<string[]>(Array(6).fill(""));
     const navigate = useNavigate();
 
-    const { saveToken, requestId, removeRequestId } = useAuthData();
+    const { saveToken, requestId, removeRequestId, saveUserId } = useAuthData();
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(6).fill(null));
 
@@ -92,11 +92,9 @@ export const CodeConfirmationScreen = () => {
         setSmsAttempts(prev => prev + 1);
         setLastSmsTime(Date.now());
 
-        submit(e, mutate, formattedValue, phone, requestId!, userAgent, saveToken, () => {
+        submit(e, mutate, formattedValue, phone, requestId!, userAgent, saveToken, saveUserId, () => {
             setTimeout(() => removeRequestId(), 1500);
-            setTimeout(() => navigate('/application'), 1500)
         });
-
     };
 
     return (

@@ -10,6 +10,21 @@ export const useAuthData = () => {
         return localStorage.getItem("requestId");
     })
 
+    const [userId, setUserId] = useState<string | null>(() => {
+        return localStorage.getItem('userId')
+    })
+
+    const saveUserId = (userId: string) => {
+        localStorage.setItem('userId', userId)
+        setUserId(userId)
+        console.log('User ID', userId)
+    }
+
+    const removeUserId = () => {
+        localStorage.removeItem('userId')
+        setUserId(null)
+    }
+
     const saveRequestId = (requestId: string) => {
         localStorage.setItem('requestId', requestId);
         setRequestId(requestId);
@@ -33,10 +48,10 @@ export const useAuthData = () => {
 
     const removeToken = () => {
         localStorage.removeItem("auth_token");
+        setToken(null);
         reactQueryClient.resetQueries();
         reactQueryClient.clear();
-        setToken(null);
     };
 
-    return { token, saveToken, removeToken, requestId, saveRequestId, removeRequestId, loadToken };
+    return { token, saveToken, removeToken, requestId, saveRequestId, removeRequestId, loadToken, saveUserId, removeUserId, userId };
 };
