@@ -1,6 +1,6 @@
 export interface IPayComissionRDO {
-    taskId: string
-    userId: string
-    amount: string
-    reasonId?: string
+    taskId: number
+    userId: number
+    amount: number
+    reasonId?: number
 }

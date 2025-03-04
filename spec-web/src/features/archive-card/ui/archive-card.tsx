@@ -9,6 +9,7 @@ import NavigationIcon from "../../../shared/assets/icons/navigation-icon"
 import PhoneIcon from "../../../shared/assets/icons/phone-icon"
 
 interface IApplicationCard {
+    id: number
     title: string,
     description: string,
     price: string,
@@ -20,11 +21,12 @@ interface IApplicationCard {
     address: string
     status_id?: number
     onClick?: () => void
-    isPaid?: boolean
     comment?: string
+    balance_history: number[]
+    isLoading: boolean
 }
 
-export const ArchiveCard = ({ title, description, commission, price_min, price_max, phone, execute_at, address, onClick, isPaid, status_id, comment }: IApplicationCard) => {
+export const ArchiveCard = ({ title, description, commission, price_min, price_max, phone, execute_at, address, onClick, status_id, comment, balance_history, id, isLoading }: IApplicationCard) => {
     const popupStore = usePopupStore('phone-popup')
 
     const handlePhoneClick = () => {
@@ -41,6 +43,7 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
         minute: "2-digit",
         timeZone: "UTC"
     }).format(new Date(isoDate));
+
 
 
     return (
@@ -65,13 +68,13 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
             </div>
             <div className="flex flex-row justify-between mt-4 w-full">
                 <span className={`text-[16px] ${status_id === 6 && 'text-[#00C950]'} ${status_id === 4 && 'text-[#FFBB00]'} ${status_id === 5 && 'text-[#FB2C36]'} font-[500]`}>{status_id === 6 && "Выполнен"} {status_id === 4 && "Возврат"} {status_id === 5 && "Отказ клиента"}</span>
-                {isPaid &&
+                {balance_history?.length === 0 &&
                     <span className="text-[14px] font-[400] flex flex-row gap-x-1 items-center text-[#262626]"><div className="w-[8px] h-[8px] rounded-full bg-[#FB2C36]" />Не оплачено</span>
                 }
             </div>
-            {isPaid &&
-                <Button label={`Оплатить ${commission}`} variant="default" height="h-[36px]" className='mt-5' onClick={onClick} />
-            }
+            {(balance_history?.length === 0 || (balance_history && balance_history.includes(id))) && (
+                <Button label={isLoading ? 'Загрузка...' : `Оплатить ${parseInt(price_max) / parseInt(commission)} ₸`} variant={isLoading ? 'disabled' : 'default'} height="h-[36px]" className='mt-5' onClick={onClick} />
+            )}
             {status_id === 4 &&
                 <div className="flex flex-row items-center gap-x-1.5 mt-3">
                     <CommentIcon />
