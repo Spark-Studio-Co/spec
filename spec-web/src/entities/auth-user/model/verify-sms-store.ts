@@ -11,8 +11,9 @@ interface IVerifySmsStore {
         code: string,
         phone: string,
         request_id: string,
+        user_agent: string,
         saveToken: (token: string) => void,
-        navigate: () => void
+        navigate: () => void,
     ) => void;
 }
 
@@ -20,12 +21,12 @@ export const useVerifySmsStore = create<IVerifySmsStore>((set) => ({
     token: '',
     isLoading: false,
     error: null,
-    submit: async (e, mutate, code, phone, request_id, saveToken, navigate) => {
+    submit: async (e, mutate, code, phone, request_id, user_agent, saveToken, navigate) => {
         e.preventDefault();
         set({ isLoading: true, error: null });
 
         mutate(
-            { code, phone, request_id },
+            { code, phone, request_id, user_agent },
             {
                 onSuccess: (data: any) => {
                     if (data?.token) {

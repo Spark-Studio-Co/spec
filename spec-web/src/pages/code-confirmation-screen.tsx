@@ -12,6 +12,12 @@ import { useSendCode } from "../entities/auth-user/api/use-verify-sms";
 import BackArrowIcon from "../shared/assets/icons/back-arrow-icon";
 
 export const CodeConfirmationScreen = () => {
+    const [userAgent, setUserAgent] = useState("");
+
+    useEffect(() => {
+        setUserAgent(navigator.userAgent);
+    }, []);
+
     const handleBack = () => {
         navigate('/');
     };
@@ -86,9 +92,9 @@ export const CodeConfirmationScreen = () => {
         setSmsAttempts(prev => prev + 1);
         setLastSmsTime(Date.now());
 
-        submit(e, mutate, formattedValue, phone, requestId!, saveToken, () => {
-            navigate('/application');
+        submit(e, mutate, formattedValue, phone, requestId!, userAgent, saveToken, () => {
             setTimeout(() => removeRequestId(), 1500);
+            setTimeout(() => navigate('/application'), 1500)
         });
 
     };
