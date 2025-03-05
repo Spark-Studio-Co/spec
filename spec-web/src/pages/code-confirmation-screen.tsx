@@ -18,9 +18,12 @@ export const CodeConfirmationScreen = () => {
         setUserAgent(navigator.userAgent);
     }, []);
 
-    const handleBack = () => {
+    const handleBack = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         navigate('/');
     };
+
     const { mutate } = useSendCode();
     const { submit, isLoading } = useVerifySmsStore();
     const { phone } = useSendSmsStore();
@@ -100,6 +103,7 @@ export const CodeConfirmationScreen = () => {
     return (
         <form className="flex flex-col justify-between h-[90%]" onSubmit={handleSubmit}>
             <button
+                type="button"
                 onClick={handleBack}
                 className="bg-[#F5F5F5] w-10 h-10 rounded-[8px] absolute left-0 top-10 flex items-center justify-center"
             >

@@ -28,12 +28,17 @@ function App() {
   const { token, loadToken } = useAuthData();
 
   useEffect(() => {
-    const checkToken = async () => {
-      await loadToken()
-      if (!token) { console.log('Token is null') }
+    loadToken()
+  }, [])
+
+  useEffect(() => {
+    if (token) {
+      reactQueryClient.refetchQueries()
+    } else {
+      reactQueryClient.resetQueries()
+      reactQueryClient.clear()
     }
-    checkToken()
-  }, [loadToken])
+  }, [token])
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 3000);

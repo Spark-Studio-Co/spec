@@ -50,7 +50,7 @@ export const RegistrationScreen = () => {
                     onChange={handlePhoneChange}
                 />
             </div>
-            <span className="text-red-500 mt-2 w-full items-center justify-center flex">{error && "Данный номер не зарегестрирован в Telegram"}</span>
+            <span className="text-red-500 mt-2 w-full items-center justify-center flex">{error}</span>
             <Button
                 variant={disabled ? 'disabled' : 'default'}
                 label={isLoading ? 'Отправка...' : 'Отправить SMS'}
