@@ -178,36 +178,46 @@ export const ApplicationScreen = () => {
                     storeKey="refund-popup"
                     closeLabel="Отмена"
                     actionLabel="Отправить"
-                    isInput={true}
-                    inputPlaceholder="Причина возврата"
-                    inputValue={refundReason}
-                    setInputValue={setRefundReason}
                     onClick={(reason) => {
                         if (currentCard !== null && reason) {
                             handleRefund()
                             closeRefundPopup();
                         }
                     }}
+                    children={
+                        <textarea
+                            className="w-full px-4 py-3 border border-[#737373] rounded-[8px] mb-4 outline-none h-[88px]"
+                            placeholder='Причина возврата'
+                            value={refundReason}
+                            onChange={(e) => setRefundReason(e.target.value)}
+                        />
+                    }
+                    disabled={!refundReason.trim()}
                 />
             )}
 
             {isOpenReject && (
                 <Popup
-                    inputValue={denyReason}
-                    setInputValue={setDenyReason}
                     isCenter={false}
                     title="Укажите причину отказа клиента"
                     storeKey="reject-popup"
                     closeLabel="Отмена"
                     actionLabel="Отправить"
-                    isInput={true}
-                    inputPlaceholder="Причина отказа"
                     onClick={(reason) => {
                         if (currentCard !== null && reason) {
                             handleClientDeny()
                             closeRejectPopup();
                         }
                     }}
+                    children={
+                        <textarea
+                            className="w-full px-4 py-3 border border-[#737373] rounded-[8px] mb-4 outline-none h-[88px]"
+                            placeholder='Причина отказа'
+                            value={denyReason}
+                            onChange={(e) => setDenyReason(e.target.value)}
+                        />
+                    }
+                    disabled={!denyReason.trim()}
                 />
             )}
         </>

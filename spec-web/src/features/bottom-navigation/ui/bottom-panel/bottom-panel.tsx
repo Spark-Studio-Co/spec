@@ -8,13 +8,13 @@ import ProfileIcon from "../../../../shared/assets/icons/profile-icon"
 
 
 
-export const BottomPanel = () => {
+export const BottomPanel = ({ isAdmin }: { isAdmin?: boolean }) => {
     const { activeTab, setActiveTab } = useActiveTabStore()
 
     const tabs = [
         { icon: <ApplicationIcon stroke={activeTab === 'Заявки' ? '#6271EB' : '#737373'} />, label: "Заявки", link: '' },
-        { icon: <ArchiveIcon stroke={activeTab === 'Архив' ? '#6271EB' : '#737373'} />, label: "Архив", link: 'archive' },
-        { icon: <ProfileIcon stroke={activeTab === 'Профиль' ? '#6271EB' : '#737373'} />, label: "Профиль", link: 'profile' },
+        { icon: <ArchiveIcon stroke={activeTab === 'Архив' ? '#6271EB' : '#737373'} />, label: "Архив", link: isAdmin ? '/admin/archive' : 'archive' },
+        { icon: <ProfileIcon stroke={activeTab === 'Профиль' ? '#6271EB' : '#737373'} />, label: "Профиль", link: isAdmin ? '/admin/profile' : 'profile' },
     ]
 
     return (

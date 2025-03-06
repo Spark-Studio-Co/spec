@@ -1,177 +1,101 @@
-import { useState } from 'react'
-import { ApplicationCard } from "../features/application-card/ui/application-card"
-import { Popup } from "../widgets/popup/popup"
+import { AdminApplicationCard } from "../features/admin-application-card/ui/admin-application-card"
+import { Popup } from "../widgets/popup/popup";
+import { Selector } from "../shared/ui/selector/selector";
 
-import { usePopupStore } from "../shared/model/popup-store"
-import { useTakenApplicationStore } from "../features/application-card/model/taken-application-store"
-import { useExecutionApplicationStore } from "../features/application-card/model/execution-application-store"
+import { usePopupStore } from "../shared/model/popup-store";
+import { useSelectorStore } from "../shared/model/selector-store";
 
 export const AdminApplicationScreen = () => {
-
-    const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore('phone-popup')
-    const { isOpen: isOpenTaken, open: openTakenPopup } = usePopupStore('taken-popup')
-    const { isOpen: isOpenExecution, open: openExecutionPopup, close: closeExecutionPopup } = usePopupStore('execution-popup')
-    const { isOpen: isOpenComplete, open: openCompletePopup, close: closeCompletePopup } = usePopupStore('complete-popup')
-    const { isOpen: isOpenRefund, open: openRefundPopup, close: closeRefundPopup } = usePopupStore('refund-popup')
-    const { isOpen: isOpenReject, open: openRejectPopup, close: closeRejectPopup } = usePopupStore('reject-popup')
-
-    const { setTaken, taken, removeTaken } = useTakenApplicationStore()
-    const { setExecution, execution, closeExecution } = useExecutionApplicationStore()
+    const { selected } = useSelectorStore('performerSelector')
+    const performerSelector = usePopupStore('performerSelector')
 
     const applications = [
         {
+            id: 1,
             title: 'Двухкомнатная квартира',
+            status_id: 1,
             description: 'Площадь 54м2, 2/5 этаж, 2 спальни, 1 ванная',
-            price: '15 000 000',
-            comission: '10%',
-            phone: '+7 (495) 123-45-67',
-            date: '12.02.2023',
-            address: 'г. Москва, ул. Ленина, д. 12'
+            price_min: '15 000 000',
+            price_max: '15 000 000',
+            commission: '150000',
+            phone: '+7 (777) 123-45-67',
+            execute_at: '2024-03-12T10:00:00Z',
+            address: 'г. Астана, ул. Кабанбай батыра, 11'
         },
-    ]
-
-    const handleTakeApplication = (index: number, phone: string) => {
-        if (taken.includes(index)) return
-        if (taken.length >= 1) {
-            openTakenPopup()
-            return
+        {
+            id: 2,
+            title: 'Трехкомнатная квартира',
+            status_id: 2,
+            description: 'Площадь 85м2, 7/9 этаж, 3 спальни, 2 ванные',
+            price_min: '25 000 000',
+            price_max: '25 000 000',
+            commission: '250000',
+            phone: '+7 (777) 234-56-78',
+            execute_at: '2024-03-13T10:00:00Z',
+            address: 'г. Астана, пр. Мангилик Ел, 53'
+        },
+        {
+            id: 3,
+            title: 'Студия',
+            status_id: 3,
+            description: 'Площадь 32м2, 4/12 этаж, 1 спальня, 1 ванная',
+            price_min: '9 000 000',
+            price_max: '9 000 000',
+            commission: '90000',
+            phone: '+7 (777) 345-67-89',
+            execute_at: '2024-03-14T10:00:00Z',
+            address: 'г. Астана, ул. Сыганак, 25'
+        },
+        {
+            id: 4,
+            title: 'Четырехкомнатная квартира',
+            status_id: 4,
+            description: 'Площадь 120м2, 15/16 этаж, 4 спальни, 2 ванные',
+            price_min: '35 000 000',
+            price_max: '35 000 000',
+            commission: '350000',
+            phone: '+7 (777) 456-78-90',
+            execute_at: '2024-03-15T10:00:00Z',
+            address: 'г. Астана, ул. Туран, 37'
+        },
+        {
+            id: 5,
+            title: 'Однокомнатная квартира',
+            status_id: 5,
+            description: 'Площадь 45м2, 3/9 этаж, 1 спальня, 1 ванная',
+            price_min: '12 000 000',
+            price_max: '12 000 000',
+            commission: '120000',
+            phone: '+7 (777) 567-89-01',
+            execute_at: '2024-03-16T10:00:00Z',
+            address: 'г. Астана, ул. Сарайшык, 5'
         }
-        setPhoneValue(phone)
-        openPhonePopup()
-        setTaken(index)
-    }
-
-    const [currentCard, setCurrentCard] = useState<number | null>(null)
-
-    const handleStartExecution = () => {
-        if (currentCard !== null) {
-            setExecution(currentCard)
-            setCurrentCard(null)
-            closeExecutionPopup()
-        }
-    }
-
-
-    const takenApplication = applications[taken[0]]
-
+    ];
 
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {applications.map((application, index) => (
-                    <ApplicationCard
-                        key={index}
+                {applications.map(application => (
+                    <AdminApplicationCard
+                        key={application.id}
                         {...application}
-                        index={index}
-                        onReject={() => {
-                            setCurrentCard(index)
-                            openRejectPopup()
-                        }}
-                        onRefund={() => {
-                            setCurrentCard(index)
-                            openRefundPopup()
-                        }}
-                        onClick={() => {
-                            if (execution === index) {
-                                setCurrentCard(index)
-                                openCompletePopup()
-                            } else if (taken.includes(index)) {
-                                setCurrentCard(index)
-                                openExecutionPopup()
-                            } else {
-                                handleTakeApplication(index, application.phone)
-                            }
-                        }}
+                        onClick={performerSelector.open}
                     />
                 ))}
             </div>
 
-
-            {isOpen && (
-                <Popup
-                    title="Звонок клиенту"
-                    storeKey="phone-popup"
-                    actionLabel={passedValue || "Продолжить"}
-                    onClick={() => { window.location.href = `tel:${passedValue}` }}
-                />
-            )}
-
-            {isOpenTaken && (
-                <Popup
+            {
+                performerSelector.isOpen && <Popup
                     isCenter={false}
-                    title={`Для взятия следующего заказа, оплатите комиссию за предыдущий заказ по адресу ${takenApplication?.address}`}
-                    storeKey="taken-popup"
+                    title="Исполнитель"
+                    storeKey="performerSelector"
+                    actionLabel="Сохранить"
                     closeLabel="Отмена"
-                    actionLabel={takenApplication?.comission || "Продолжить"}
+                    children={<Selector storeKey="performerSelector" label="Поиск" className="mb-2" options={['Турсунбаев Ержан Кайратович', 'Турсунбаев Ержан Кайратович']} />}
+                    disabled={!selected}
+                    onClick={performerSelector.close}
                 />
-            )}
-
-            {isOpenExecution && (
-                <Popup
-                    title="Вы начали исполнять данную заявку?"
-                    storeKey="execution-popup"
-                    closeLabel="Нет"
-                    actionLabel="Да"
-                    onClick={handleStartExecution}
-                />
-            )}
-
-            {isOpenComplete && (
-                <Popup
-                    title="Вы выполнили данную заявку?"
-                    storeKey="complete-popup"
-                    closeLabel="Нет"
-                    actionLabel="Да"
-                    onClick={() => {
-                        if (currentCard !== null) {
-                            removeTaken(currentCard)
-                            closeExecution()
-                            setCurrentCard(null)
-                            closeCompletePopup()
-                        }
-                    }}
-                />
-            )}
-
-            {isOpenRefund && (
-                <Popup
-                    isCenter={false}
-                    title="Укажите причину возврата заказа"
-                    storeKey="refund-popup"
-                    closeLabel="Отмена"
-                    actionLabel="Отправить"
-                    isInput={true}
-                    inputPlaceholder="Причина возврата"
-                    onClick={(reason) => {
-                        if (currentCard !== null && reason) {
-                            removeTaken(currentCard)
-                            closeExecution()
-                            setCurrentCard(null)
-                            closeRefundPopup()
-                        }
-                    }}
-                />
-            )}
-
-            {isOpenReject && (
-                <Popup
-                    isCenter={false}
-                    title="Укажите причину отказа клиента"
-                    storeKey="reject-popup"
-                    closeLabel="Отмена"
-                    actionLabel="Отправить"
-                    isInput={true}
-                    inputPlaceholder="Причина отказа"
-                    onClick={(reason) => {
-                        if (currentCard !== null && reason) {
-                            removeTaken(currentCard)
-                            closeExecution()
-                            setCurrentCard(null)
-                            closeRejectPopup()
-                        }
-                    }}
-                />
-            )}
+            }
         </>
     )
 }

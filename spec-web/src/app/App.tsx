@@ -9,6 +9,10 @@ import { ApplicationScreen } from "../pages/applications-screen";
 import { ArchiveScreen } from "../pages/archive-screen";
 import { ProfileScreen } from "../pages/profile-screen";
 
+//admin
+import { AdminLogin } from "../pages/admin-login-screen";
+import { AdminApplicationScreen } from "../pages/admin-applications-screen";
+
 import { LoaderScreen } from "../pages/loader-screen";
 
 // Layouts
@@ -21,7 +25,6 @@ import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 // Styles
 import "./styles/global.css";
 import "./styles/fonts.css";
-
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -49,19 +52,29 @@ function App() {
     return <LoaderScreen />;
   }
 
+  let isAdmin = true;
+
   return (
     <QueryClientProvider client={reactQueryClient}>
       <BrowserRouter>
         <Routes>
           {token ? (
-            <>
-              <Route path="/application" element={<MainLayout><ApplicationScreen /></MainLayout>} />
-              <Route path="/archive" element={<MainLayout><ArchiveScreen /></MainLayout>} />
-              <Route path="/profile" element={<MainLayout><ProfileScreen /></MainLayout>} />
-              <Route path="*" element={<Navigate to="/application" replace />} />
-            </>
+            isAdmin ? (
+              <>
+                <Route path="/admin/application" element={<MainLayout isAdmin><AdminApplicationScreen /></MainLayout>} />
+                <Route path="*" element={<Navigate to="/admin/application" replace />} />
+              </>
+            ) : (
+              <>
+                <Route path="/application" element={<MainLayout><ApplicationScreen /></MainLayout>} />
+                <Route path="/archive" element={<MainLayout><ArchiveScreen /></MainLayout>} />
+                <Route path="/profile" element={<MainLayout><ProfileScreen /></MainLayout>} />
+                <Route path="*" element={<Navigate to="/application" replace />} />
+              </>
+            )
           ) : (
             <>
+              <Route path="/admin" element={<AuthLayout><AdminLogin /></AuthLayout>} />
               <Route path="/" element={<AuthLayout><RegistrationScreen /></AuthLayout>} />
               <Route path="/code-confirmation" element={<AuthLayout><CodeConfirmationScreen /></AuthLayout>} />
               <Route path="*" element={<Navigate to="/" replace />} />

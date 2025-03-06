@@ -1,5 +1,5 @@
-import { SingleValueInput } from "../shared/single-value-input/single-value-input";
-import { Button } from "../shared/button/button";
+import { SingleValueInput } from "../shared/ui/single-value-input/single-value-input";
+import { Button } from "../shared/ui/button/button";
 import { ChangeEvent, SyntheticEvent, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 

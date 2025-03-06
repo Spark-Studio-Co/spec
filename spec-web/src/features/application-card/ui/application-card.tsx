@@ -1,4 +1,4 @@
-import { Button } from "../../../shared/button/button"
+import { Button } from "../../../shared/ui/button/button"
 
 import { usePopupStore } from "../../../shared/model/popup-store"
 

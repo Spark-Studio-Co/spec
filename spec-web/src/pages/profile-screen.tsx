@@ -1,7 +1,7 @@
 import { CategoriesList } from "../features/categories-list/ui/categories-list";
 import { ProfileHeader } from "../features/profile-header/ui/profile-header";
 import { StatisticsCard } from "../features/statistics-card/ui/statistics-card";
-import { Button } from "../shared/button/button";
+import { Button } from "../shared/ui/button/button";
 
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 

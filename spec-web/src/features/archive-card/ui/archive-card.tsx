@@ -1,4 +1,4 @@
-import { Button } from "../../../shared/button/button"
+import { Button } from "../../../shared/ui/button/button"
 
 import CommentIcon from "../../../shared/assets/icons/comment-icon"
 

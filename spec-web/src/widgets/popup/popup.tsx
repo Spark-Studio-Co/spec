@@ -1,7 +1,9 @@
-import { Button } from "../../shared/button/button";
+import { Button } from "../../shared/ui/button/button";
 import { usePopupStore } from "../../shared/model/popup-store";
+import { ReactNode } from "react";
 
 interface IPopup {
+    children?: ReactNode
     title: string
     isCenter?: boolean
     closeLabel?: string
@@ -9,34 +11,27 @@ interface IPopup {
     storeKey: string
     onClick?: (inputValue?: string) => void
     isInput?: boolean
-    inputPlaceholder?: string
+    isSelector?: boolean
     inputValue?: string
-    setInputValue?: (inputValue: string) => void
+    disabled?: boolean
 }
 
-export const Popup = ({ inputValue, setInputValue, title, isCenter = true, closeLabel = "Закрыть", actionLabel = "Продолжить", storeKey, onClick, isInput, inputPlaceholder }: IPopup) => {
+export const Popup = ({ disabled, inputValue, title, isCenter = true, closeLabel = "Закрыть", actionLabel = "Продолжить", storeKey, onClick, children }: IPopup) => {
     const { close } = usePopupStore(storeKey)
 
     return (
         <div className="fixed inset-0 bg-[#0000004D] flex items-center justify-center z-50">
             <div className={`bg-white px-4 min-h-[220px] mx-4 w-full flex flex-col justify-center rounded-[8px]`}>
-                <span className={`${isCenter ? 'text-center' : 'text-left'} text-dark font-[500] text-[20px] my-8`}>{title}</span>
-                {isInput && (
-                    <textarea
-                        className="w-full px-4 py-3 border border-[#737373] rounded-[8px] mb-4 outline-none h-[88px]"
-                        placeholder={inputPlaceholder}
-                        value={inputValue}
-                        onChange={setInputValue ? (e) => setInputValue(e.target.value) : undefined}
-                    />
-                )}
+                <span className={`${isCenter ? 'text-center' : 'text-left'} text-dark font-[500] text-[20px] mt-8 mb-4`}>{title}</span>
+                {children}
                 <Button variant="transparent" label={closeLabel} onClick={close} height="h-[48px]" />
                 <Button
                     label={actionLabel}
-                    variant={isInput && !inputValue?.trim() ? "disabled" : "default"}
-                    onClick={() => onClick?.(isInput ? inputValue : undefined)}
+                    variant={disabled ? "disabled" : "default"}
+                    onClick={() => onClick?.(inputValue)}
                     height="h-[48px]"
                     className="mt-2 mb-6"
-                    disabled={isInput && !inputValue?.trim()}
+                    disabled={disabled}
                 />
             </div>
         </div>

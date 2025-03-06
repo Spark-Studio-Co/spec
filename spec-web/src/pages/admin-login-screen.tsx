@@ -1,9 +1,9 @@
-import { Input } from '../shared/input/input'
-import { Button } from '../shared/button/button'
+import { Input } from '../shared/ui/input/input'
+import { Button } from '../shared/ui/button/button'
 import { SyntheticEvent } from 'react';
 
 import { useLoginStore } from '../entities/login/model/login-store';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from 'react-router';
 import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 
 export const AdminLogin = () => {
@@ -26,7 +26,7 @@ export const AdminLogin = () => {
         setLogin('');
         setPassword('');
 
-        navigate({ to: '/admin/applications', replace: true })
+        navigate('/admin/application')
     }
 
     return (

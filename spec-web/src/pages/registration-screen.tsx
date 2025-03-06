@@ -1,6 +1,6 @@
 import { ChangeEvent, useState, SyntheticEvent } from "react";
-import { Button } from "../shared/button/button";
-import { Input } from "../shared/input/input";
+import { Button } from "../shared/ui/button/button";
+import { Input } from "../shared/ui/input/input";
 import { useNavigate } from "react-router";
 import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 import { useSendSms } from "../entities/auth-user/api/use-send-sms";

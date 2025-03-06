@@ -3,15 +3,16 @@ import { BottomPanel } from "../../features/bottom-navigation/ui/bottom-panel/bo
 
 type MainLayoutProps = {
     children: React.ReactNode;
+    isAdmin?: boolean
 };
 
-export const MainLayout = ({ children }: MainLayoutProps) => {
+export const MainLayout = ({ children, isAdmin }: MainLayoutProps) => {
     return (
         <>
             <div className="min-h-[100vh] bg-[#F5F5F5] px-4">
                 <main className="pt-10 pb-28 flex-1">{children}</main>
             </div>
-            <BottomPanel />
+            <BottomPanel isAdmin={isAdmin} />
         </>
     )
 }
