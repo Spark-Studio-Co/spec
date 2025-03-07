@@ -3,15 +3,17 @@ import CheckboxIcon from "../../assets/icons/checkbox-icon"
 import { useCheckboxStore } from "../../model/checkbox-store"
 
 interface ICheckboxProps {
-    onClick?: () => void,
+    onClick?: (ctx: any) => void,
     storeKey: string
 }
 
 export const Checkbox = ({ onClick, storeKey }: ICheckboxProps) => {
     const { checked, setChecked } = useCheckboxStore(storeKey)
 
-    const handleCheckbox = () => {
-        onClick
+    const handleCheckbox = (e: React.MouseEvent) => {
+        if (onClick) {
+            onClick(e)
+        }
         setChecked()
     }
 

@@ -118,7 +118,7 @@ export const AdminApplicationScreen = () => {
                     storeKey="performerSelector"
                     actionLabel="Сохранить"
                     closeLabel="Отмена"
-                    children={<Selector storeKey="performerSelector" label="Поиск" className="mb-2" options={performers} />}
+                    children={<Selector storeKey="performerSelector" label="Поиск" className="mb-8" options={performers} />}
                     disabled={!performers.includes(selected)}
                     onClick={handlePerformerSelect}
                     onClose={() => {

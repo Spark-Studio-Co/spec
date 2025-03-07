@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import DropdownArrowIcon from '../../../shared/assets/icons/dropdown-arrow-icon'
-import { ICategory } from '../model/categories.interface'
 
 interface ICategoriesListProps {
-    categories: ICategory[]
+    categories: string[]
 }
 
 export const CategoriesList = ({ categories }: ICategoriesListProps) => {
@@ -31,10 +30,9 @@ export const CategoriesList = ({ categories }: ICategoriesListProps) => {
                         {categories.map((category, index) => (
                             <span
                                 key={index}
-                                onClick={category.onClick}
                                 className="text-[16px] font-[400] text-dark cursor-pointer"
                             >
-                                {category.name}
+                                {category}
                                 <div className='w-full h-[1px] bg-[#F5F5F5] mt-1' />
                             </span>
                         ))}
