@@ -1,53 +1,55 @@
-import { useGetApplications } from "../entities/application/api/use-get-applications"
-import { usePopupStore } from "../shared/model/popup-store"
-import { useTakenApplicationStore } from "../features/application-card/model/taken-application-store"
-import { ApplicationCard } from "../features/application-card/ui/application-card"
-import { useState } from "react"
+import { ArchiveCard } from "../features/archive-card/ui/archive-card";
 
 export const AdminArchiveScreen = () => {
-    const { data: applications, isLoading, error } = useGetApplications();
-
-    const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore("phone-popup");
-    const { isOpen: isOpenTaken, open: openTakenPopup } = usePopupStore("taken-popup");
-    const { isOpen: isOpenRefund, open: openRefundPopup, close: closeRefundPopup } = usePopupStore("refund-popup");
-    const { isOpen: isOpenReject, open: openRejectPopup, close: closeRejectPopup } = usePopupStore("reject-popup");
-
-    const { setTaken, taken, removeTaken } = useTakenApplicationStore();
-
-    const [currentCard, setCurrentCard] = useState<number | null>(null);
-
-    if (isLoading) return <p className="text-center">Загрузка заявок...</p>;
-    if (error) return <p className="text-red-500 text-center">Ошибка: {error.message}</p>;
-
-    const handleTakeApplication = (index: number, phone: string) => {
-        if (taken.includes(index)) return;
-        if (taken.length >= 1) {
-            openTakenPopup();
-            return;
+    const applications = [
+        {
+            id: 1,
+            title: 'Двухкомнатная квартира',
+            description: 'Требуется оценка двухкомнатной квартиры в центре города',
+            price: 25000,
+            commission: 5000,
+            phone: '+7 (777) 123-45-67',
+            date: '2024-03-06',
+            address: 'ул. Абая 123, кв. 45',
+            status_id: 3, // completed
+            performer: 'Турсунбаев Ержан Кайратович'
+        },
+        {
+            id: 2,
+            title: 'Земельный участок',
+            description: 'Оценка земельного участка под строительство',
+            price: 35000,
+            commission: 7000,
+            phone: '+7 (777) 234-56-78',
+            date: '2024-03-05',
+            address: 'мкр. Самал-2, уч. 15',
+            status_id: 4, // refunded
+            performer: 'Турсунбаев Ержан Кайратович'
+        },
+        {
+            id: 3,
+            title: 'Коммерческое помещение',
+            description: 'Оценка торгового помещения в ТЦ',
+            price: 45000,
+            commission: 9000,
+            phone: '+7 (777) 345-67-89',
+            date: '2024-03-04',
+            address: 'пр. Достык 89, ТЦ "Центр"',
+            status_id: 5, // rejected
+            performer: 'Турсунбаев Ержан Кайратович'
         }
-        setPhoneValue(phone);
-        openPhonePopup();
-        setCurrentCard(index);
-    };
+    ];
 
     return (
-        <div className="flex flex-col gap-3">
-            {applications?.map((application: any, index: number) => (
-                <ApplicationCard
-                    key={index}
-                    {...application}
-                    index={index}
-                    onClick={() => handleTakeApplication(index, application.phone)}
-                    onRefund={() => {
-                        setCurrentCard(index);
-                        openRefundPopup();
-                    }}
-                    onReject={() => {
-                        setCurrentCard(index);
-                        openRejectPopup();
-                    }}
-                />
-            ))}
-        </div>
+        <>
+            <div className="flex flex-col gap-3">
+                goidaaaa
+                {/* {applications.map((application, index) => (
+                    <ArchiveCard
+                        price_min={""} price_max={""} execute_at={""} balance_history={[]} isLoading={false} key={index}
+                        {...application} />
+                ))} */}
+            </div>
+        </>
     );
 };

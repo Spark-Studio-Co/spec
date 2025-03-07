@@ -12,6 +12,7 @@ import { ProfileScreen } from "../pages/profile-screen";
 //admin
 import { AdminLogin } from "../pages/admin-login-screen";
 import { AdminApplicationScreen } from "../pages/admin-applications-screen";
+import { AdminArchiveScreen } from "../pages/admin-archive-screen";
 
 import { LoaderScreen } from "../pages/loader-screen";
 
@@ -61,7 +62,8 @@ function App() {
           {token ? (
             isAdmin ? (
               <>
-                <Route path="/admin/application" element={<MainLayout isAdmin><AdminApplicationScreen /></MainLayout>} />
+                <Route path="/admin/archive" element={<MainLayout isAdmin={true}><AdminArchiveScreen /></MainLayout>} />
+                <Route path="/admin/application" element={<MainLayout isAdmin={true}><AdminApplicationScreen /></MainLayout>} />
                 <Route path="*" element={<Navigate to="/admin/application" replace />} />
               </>
             ) : (
