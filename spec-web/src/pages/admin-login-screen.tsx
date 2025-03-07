@@ -2,12 +2,14 @@ import { Input } from '../shared/ui/input/input'
 import { Button } from '../shared/ui/button/button'
 import { SyntheticEvent } from 'react';
 
-import { useLoginStore } from '../entities/login/model/login-store';
+import { useAdminLoginStore } from '../entities/admin-login/model/admin-login-store';
+import { useAdminLogin } from '../entities/admin-login/api/use-admin-login';
 import { useNavigate } from 'react-router';
 import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 
 export const AdminLogin = () => {
-    const { login, password, setLogin, setPassword } = useLoginStore()
+    const { mutate, isPending } = useAdminLogin()
+    const { login, password, setLogin, setPassword } = useAdminLoginStore()
     const { saveToken } = useAuthData();
     const navigate = useNavigate();
 
@@ -16,17 +18,23 @@ export const AdminLogin = () => {
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
 
-        console.log("Отправка логина:", login);
-        console.log("Отправка пароля:", password);
 
-        // Set a temporary token for demo purposes
-        const tempToken = 'admin-token';
-        saveToken(tempToken);
-
+        mutate({ login, password },
+            {
+                onSuccess: () => {
+                    console.log('Admin login successfully')
+                    const tempToken = 'admin-token';
+                    saveToken(tempToken);
+                    navigate('/admin/application')
+                },
+                onError: (error: any) => {
+                    console.log(error.message)
+                    throw new error
+                }
+            }
+        )
         setLogin('');
         setPassword('');
-
-        navigate('/admin/application')
     }
 
     return (
@@ -50,7 +58,7 @@ export const AdminLogin = () => {
             </div>
             <Button
                 variant={isDisabled ? 'disabled' : 'default'}
-                label="Войти"
+                label={isPending ? "Загрузка..." : "Войти"}
                 className="mt-auto"
                 type="submit"
                 disabled={isDisabled}

@@ -1,4 +1,5 @@
 import { AdminArchiveCard } from "../features/admin-archive-card/ui/admin-archive-card";
+import { Checkbox } from "../shared/ui/checkbox/checkbox";
 
 export const AdminArchiveScreen = () => {
     const applications = [
@@ -53,6 +54,11 @@ export const AdminArchiveScreen = () => {
 
     return (
         <div className="flex flex-col gap-3">
+            <div className="flex flex-row gap-x-2 items-center">
+                <span className="text-dark font-[400] text-[16px]">Неоплаченные</span>
+                <Checkbox storeKey="archive" />
+            </div>
+
             {applications.map((application) => (
                 <AdminArchiveCard
                     key={application.id}
