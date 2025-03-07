@@ -56,7 +56,7 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
             </div>
             <div className="flex flex-row items-center gap-x-1.5" onClick={handlePhoneClick}>
                 <PhoneIcon />
-                <a className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>
+                <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>
             </div>
             <div className="flex flex-row items-center mt-2.5 gap-x-1">
                 <ClockIcon />
@@ -68,8 +68,10 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
             </div>
             <div className="flex flex-row justify-between mt-4 w-full">
                 <span className={`text-[16px] ${status_id === 6 && 'text-[#00C950]'} ${status_id === 4 && 'text-[#FFBB00]'} ${status_id === 5 && 'text-[#FB2C36]'} font-[500]`}>{status_id === 6 && "Выполнен"} {status_id === 4 && "Возврат"} {status_id === 5 && "Отказ клиента"}</span>
-                {balance_history?.length === 0 &&
+                {balance_history?.length === 0 ?
                     <span className="text-[14px] font-[400] flex flex-row gap-x-1 items-center text-[#262626]"><div className="w-[8px] h-[8px] rounded-full bg-[#FB2C36]" />Не оплачено</span>
+                    :
+                    <span className="text-[14px] font-[400] flex flex-row gap-x-1 items-center text-[#262626]"><div className="w-[8px] h-[8px] rounded-full bg-[#008235]" />Оплачено</span>
                 }
             </div>
             {(balance_history?.length === 0 || (balance_history && balance_history.includes(id))) && (
