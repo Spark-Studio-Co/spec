@@ -44,7 +44,8 @@ export const AdminApplicationCard = ({ title, description, price_min, price_max,
                 <span className="text-[14px] font-[400] text-dark">
                     Комиссия {Math.round(parseInt(price_min) / parseInt(commission))} -
                     {Math.round(parseInt(price_max) / parseInt(commission))} ₸
-                </span>            </div>
+                </span>
+            </div>
             <div className="flex flex-row items-center mt-3 gap-x-1.5">
                 <PhoneIcon />
                 <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>

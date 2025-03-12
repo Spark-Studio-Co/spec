@@ -101,6 +101,8 @@ export const AdminApplicationScreen = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {applications.map(application => (
                     <AdminApplicationCard
+                        performer_name=''
+                        performer_phone=''
                         key={application.id}
                         {...application}
                         onClick={() => {
