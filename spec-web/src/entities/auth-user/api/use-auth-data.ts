@@ -1,57 +1,79 @@
-import { useState } from "react";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import reactQueryClient from "../../../app/api/query-client";
 
-export const useAuthData = () => {
-    const [token, setToken] = useState<string | null>(() => {
-        return localStorage.getItem("auth_token");
-    });
+interface AuthState {
+    token: string | null;
+    requestId: string | null;
+    role: string | null;
+    userId: string | null;
+    saveToken: (token: string) => void;
+    removeToken: () => void;
+    saveRequestId: (requestId: string) => void;
+    removeRequestId: () => void;
+    loadToken: () => Promise<string | null>;
+    saveUserId: (userId: string) => void;
+    removeUserId: () => void;
+    saveRole: (role: string) => void;
+    removeRole: () => void;
+}
 
-    const [requestId, setRequestId] = useState<string | null>(() => {
-        return localStorage.getItem("requestId");
-    })
+const useAuthStore = create<AuthState>()(
+    persist(
+        (set, get) => ({
+            token: null,
+            requestId: null,
+            role: null,
+            userId: null,
 
-    const [userId, setUserId] = useState<string | null>(() => {
-        return localStorage.getItem('userId')
-    })
+            saveToken: (token: string) => set({ token }),
 
-    const saveUserId = (userId: string) => {
-        localStorage.setItem('userId', userId)
-        setUserId(userId)
-        console.log('User ID', userId)
-    }
+            removeToken: () => {
+                set({ token: null });
+                localStorage.removeItem("auth-storage"); // ✅ Ensure full removal
+                reactQueryClient.resetQueries();
+                reactQueryClient.clear();
+            },
 
-    const removeUserId = () => {
-        localStorage.removeItem('userId')
-        setUserId(null)
-    }
+            saveRequestId: (requestId: string) => set({ requestId }),
 
-    const saveRequestId = (requestId: string) => {
-        localStorage.setItem('requestId', requestId);
-        setRequestId(requestId);
-    }
+            removeRequestId: () => set({ requestId: null }),
 
-    const removeRequestId = () => {
-        localStorage.removeItem("requestId");
-        setRequestId(null);
-    };
+            loadToken: async () => {
+                return get().token;
+            },
 
-    const loadToken = async () => {
-        const storedToken = localStorage.getItem('auth_token');
-        setToken(storedToken);
-        return storedToken;
-    }
+            saveUserId: (userId: string) => set({ userId }),
 
-    const saveToken = (newToken: string) => {
-        localStorage.setItem("auth_token", newToken);
-        setToken(newToken);
-    };
+            removeUserId: () => set({ userId: null }),
 
-    const removeToken = () => {
-        localStorage.removeItem("auth_token");
-        setToken(null);
-        reactQueryClient.resetQueries();
-        reactQueryClient.clear();
-    };
+            saveRole: (role: string) => {
+                set({ role });
+            },
 
-    return { token, saveToken, removeToken, requestId, saveRequestId, removeRequestId, loadToken, saveUserId, removeUserId, userId };
-};
+            removeRole: () => {
+                set({ role: null });
+
+                setTimeout(() => {
+                    localStorage.removeItem("role");
+                    localStorage.setItem("auth-storage", JSON.stringify({ state: get(), version: 0 }));
+                }, 0);
+
+                reactQueryClient.resetQueries();
+                reactQueryClient.clear();
+            },
+        }),
+        {
+            name: "auth-storage",
+            storage: createJSONStorage(() => localStorage),
+            partialize: (state) => ({
+                token: state.token,
+                requestId: state.requestId,
+                role: state.role,
+                userId: state.userId,
+            }),
+        }
+    )
+);
+
+export const useAuthData = () => useAuthStore();

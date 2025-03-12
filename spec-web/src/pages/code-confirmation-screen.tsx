@@ -21,7 +21,7 @@ export const CodeConfirmationScreen = () => {
     const handleBack = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        navigate('/');
+        navigate('/application');
     };
 
     const { mutate } = useSendCode();

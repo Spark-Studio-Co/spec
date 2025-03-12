@@ -8,10 +8,10 @@ import { inputMask } from "../shared/utils/inputMask";
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 
 export const RegistrationScreen = () => {
-    const { phone, setPhone, submit, isLoading, error } = useSendSmsStore();
+    const { phone, setPhone, submit, isLoading } = useSendSmsStore();
     const [disabled, setDisabled] = useState<boolean>(true);
     const [rawPhone, setRawPhone] = useState<string>("");
-    const { mutate } = useSendSms();
+    const { mutate, error } = useSendSms();
     const navigate = useNavigate();
 
     const { saveRequestId } = useAuthData()
@@ -50,7 +50,7 @@ export const RegistrationScreen = () => {
                     onChange={handlePhoneChange}
                 />
             </div>
-            <span className="text-red-500 mt-2 w-full items-center justify-center flex">{error}</span>
+            <span className="text-red-500 text-sm mt-2 w-full items-center justify-center flex">{error?.message}</span>
             <Button
                 variant={disabled ? 'disabled' : 'default'}
                 label={isLoading ? 'Отправка...' : 'Отправить SMS'}

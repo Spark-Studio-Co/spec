@@ -1,17 +1,17 @@
 import { create } from "zustand";
 
 interface IAdminLoginStore {
-    login: string
+    username: string
     password: string
-    setLogin: (login: string) => void
+    setUsername: (username: string) => void
     setPassword: (password: string) => void
 }
 
 export const useAdminLoginStore = create<IAdminLoginStore>(
     (set) => ({
-        login: '',
+        username: '',
         password: '',
-        setLogin: (login: string) => set({ login: login }),
+        setUsername: (username: string) => set({ username: username }),
         setPassword: (password: string) => set({ password: password }),
     })
 )

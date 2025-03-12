@@ -12,9 +12,9 @@ export const BottomPanel = ({ isAdmin }: { isAdmin?: boolean }) => {
     const { activeTab, setActiveTab } = useActiveTabStore()
 
     const tabs = [
-        { icon: <ApplicationIcon stroke={activeTab === 'Заявки' ? '#6271EB' : '#737373'} />, label: "Заявки", link: isAdmin ? '/admin/application' : 'application' },
-        { icon: <ArchiveIcon stroke={activeTab === 'Архив' ? '#6271EB' : '#737373'} />, label: "Архив", link: isAdmin ? '/admin/archive' : 'archive' },
-        { icon: <ProfileIcon stroke={activeTab === 'Профиль' ? '#6271EB' : '#737373'} />, label: "Профиль", link: isAdmin ? '/admin/profile' : 'profile' },
+        { icon: <ApplicationIcon stroke={activeTab === 'Заявки' ? '#6271EB' : '#737373'} />, label: "Заявки", link: isAdmin ? '/admin/application' : '/application' },
+        { icon: <ArchiveIcon stroke={activeTab === 'Архив' ? '#6271EB' : '#737373'} />, label: "Архив", link: isAdmin ? '/admin/archive' : '/archive' },
+        { icon: <ProfileIcon stroke={activeTab === 'Профиль' ? '#6271EB' : '#737373'} />, label: "Профиль", link: isAdmin ? '/admin/profile' : '/profile' },
     ]
 
     return (

@@ -1,4 +1,4 @@
 export interface IAdminLoginRDO {
-    login: string
+    username: string
     password: string
 }

@@ -12,9 +12,13 @@ import BigCalendarIcon from '../shared/assets/icons/big-calendar-icon';
 import { useVisibleStore } from "../shared/model/visible-store";
 import { useNavigate } from "react-router";
 
-const cities = ['Almaty', 'Karaganda', 'Astana']
+import { useGetCities } from '../entities/cities/api/use-get-cities';
+import { useGetCategories } from '../entities/categories/api/use-get-categories';
+
 
 export const AdminCreateApplication = () => {
+    const { data: cities } = useGetCities()
+    const { data: categories } = useGetCategories()
     const { isVisible, toggle, open } = useVisibleStore('time')
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
@@ -63,7 +67,7 @@ export const AdminCreateApplication = () => {
             <div className="mt-16 h-full">
                 <Selector isIcon={false} label="Город" options={cities} storeKey="citiesSelector" />
                 <Input placeholder="Адрес" baseStyle="applicationStyle" className="mt-2" />
-                <Input placeholder="Категория" baseStyle="applicationStyle" className="mt-2" />
+                <Selector isIcon={false} label="Категории" options={categories} storeKey="categoriesSelector" className='mt-2' />
                 <textarea
                     className="w-full mt-2 px-4 py-2 border border-[#737373] rounded-[8px] outline-none h-[88px]"
                     placeholder='Причина возврата'

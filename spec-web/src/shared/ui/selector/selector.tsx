@@ -3,13 +3,13 @@ import SelectorArrowIcon from "../../assets/icons/selector-arrow-icon"
 
 import { useSelectorStore } from "../../model/selector-store"
 import { useVisibleStore } from "../../model/visible-store"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
 interface ISelectorProps {
     label: string
     className?: string
     storeKey: string
-    options: string[]
+    options: any
     isIcon?: boolean
 }
 
@@ -18,10 +18,6 @@ export const Selector = ({ label, className, options, storeKey, isIcon }: ISelec
     const { toggle, isVisible } = useVisibleStore(storeKey)
     const [searchText, setSearchText] = useState(selected)
 
-    const filteredOptions = options.filter(option =>
-        option.toLowerCase().includes(searchText.toLowerCase())
-    )
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setSearchText(value)
@@ -29,6 +25,12 @@ export const Selector = ({ label, className, options, storeKey, isIcon }: ISelec
             setSelected('')
         }
     }
+
+    const filteredOptions = useMemo(() => {
+        return options?.filter((option: { name: string }) =>
+            option.name.toLowerCase().includes(searchText.toLowerCase())
+        )
+    }, [options, searchText])
 
     const handleOptionSelect = (option: string) => {
         setSelected(option)
@@ -62,13 +64,13 @@ export const Selector = ({ label, className, options, storeKey, isIcon }: ISelec
                 <div className="absolute w-full z-10 top-[48px] bg-white border border-[#737373] rounded-b-[8px] shadow-lg max-h-[200px] overflow-y-auto">
                     <div className="flex flex-col py-1">
                         {filteredOptions.length > 0 ? (
-                            filteredOptions.map((option, index) => (
+                            filteredOptions.map((option: any, index: number) => (
                                 <span
                                     key={index}
-                                    onClick={() => handleOptionSelect(option)}
+                                    onClick={() => handleOptionSelect(option.name)}
                                     className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}
                                 >
-                                    {option}
+                                    {option.name}
                                 </span>
                             ))
                         ) : (

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import DropdownArrowIcon from '../../../shared/assets/icons/dropdown-arrow-icon'
 
 interface ICategoriesListProps {
-    categories: string[]
+    categories: any
 }
 
 export const CategoriesList = ({ categories }: ICategoriesListProps) => {
@@ -27,12 +27,12 @@ export const CategoriesList = ({ categories }: ICategoriesListProps) => {
                     className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[500px]' : 'h-[90px]'}`}
                 >
                     <div className="flex flex-col gap-y-2">
-                        {categories.map((category, index) => (
+                        {categories?.map((category: any, index: number) => (
                             <span
                                 key={index}
                                 className="text-[16px] font-[400] text-dark cursor-pointer"
                             >
-                                {category}
+                                {category?.name}
                                 <div className='w-full h-[1px] bg-[#F5F5F5] mt-1' />
                             </span>
                         ))}

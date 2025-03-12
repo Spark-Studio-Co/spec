@@ -9,23 +9,25 @@ import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 
 export const AdminLogin = () => {
     const { mutate, isPending } = useAdminLogin()
-    const { login, password, setLogin, setPassword } = useAdminLoginStore()
-    const { saveToken } = useAuthData();
+    const { username, password, setUsername, setPassword } = useAdminLoginStore()
+    const { saveToken, saveRole } = useAuthData();
     const navigate = useNavigate();
 
-    const isDisabled = !login.trim() || !password.trim();
+    const isDisabled = !username.trim() || !password.trim();
 
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
 
 
-        mutate({ login, password },
+        mutate({ username, password },
             {
-                onSuccess: () => {
-                    console.log('Admin login successfully')
-                    const tempToken = 'admin-token';
-                    saveToken(tempToken);
-                    navigate('/admin/application')
+                onSuccess: (data?: any) => {
+                    if (data?.token && data?.admin?.role) {
+                        saveToken(data?.token);
+                        saveRole(data?.admin?.role);
+                        console.log("Role:", data?.admin?.role)
+                        navigate('/admin/application');
+                    }
                 },
                 onError: (error: any) => {
                     console.log(error.message)
@@ -33,7 +35,7 @@ export const AdminLogin = () => {
                 }
             }
         )
-        setLogin('');
+        setUsername('');
         setPassword('');
     }
 
@@ -45,8 +47,8 @@ export const AdminLogin = () => {
                     type="text"
                     className="w-full mt-8"
                     placeholder='Логин'
-                    value={login}
-                    onChange={(e) => setLogin(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                 />
                 <Input
                     type="password"
