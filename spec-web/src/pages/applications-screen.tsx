@@ -90,6 +90,18 @@ export const ApplicationScreen = () => {
     }
 
 
+    if (applications.length === 0) {
+        return (
+            <div className="w-full px-3 py-4 flex flex-col bg-white rounded-[12px]">
+                <span className="text-[#171717] font-[500] text-[20px] leading-tight">Данная форма предназначена для показа заявок на исполнение бытовых услуг</span>
+                <span className="text-[#171717] font-[400] text-[16px] mt-2">Для регистрации в качестве исполнителя свяжитесь с администрацией
+                    по WhatsApp <a href="tel:+77777777777" className="text-[16px] underline text-[#007AFF]">+77777777777</a></span>
+            </div>
+        )
+    }
+
+
+
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

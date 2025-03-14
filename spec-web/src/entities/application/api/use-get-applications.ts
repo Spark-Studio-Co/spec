@@ -7,5 +7,9 @@ export const useGetApplications = () => {
         queryFn: applicationsData,
         staleTime: 1000 * 60 * 5,
         retry: 2,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
+        refetchInterval: 10000,
+        refetchIntervalInBackground: true,
     });
 };

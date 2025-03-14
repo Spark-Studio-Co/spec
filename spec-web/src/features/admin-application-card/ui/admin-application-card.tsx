@@ -42,8 +42,7 @@ export const AdminApplicationCard = ({ title, description, price_min, price_max,
             <div className="flex flex-row items-center mt-2 gap-x-2">
                 <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
                 <span className="text-[14px] font-[400] text-dark">
-                    Комиссия {Math.round(parseInt(price_min) / parseInt(commission))} -
-                    {Math.round(parseInt(price_max) / parseInt(commission))} ₸
+                    Комиссия {commission}  ₸
                 </span>
             </div>
             <div className="flex flex-row items-center mt-3 gap-x-1.5">

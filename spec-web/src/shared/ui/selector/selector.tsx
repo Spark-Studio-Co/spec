@@ -14,15 +14,15 @@ interface ISelectorProps {
 }
 
 export const Selector = ({ label, className, options, storeKey, isIcon }: ISelectorProps) => {
-    const { selected, setSelected } = useSelectorStore(storeKey)
+    const { selected, setSelected, setSelectedName } = useSelectorStore(storeKey)
     const { toggle, isVisible } = useVisibleStore(storeKey)
-    const [searchText, setSearchText] = useState(selected)
+    const [searchText, setSearchText] = useState('')
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setSearchText(value)
         if (!options.includes(value)) {
-            setSelected('')
+            setSelected(0)
         }
     }
 
@@ -32,8 +32,9 @@ export const Selector = ({ label, className, options, storeKey, isIcon }: ISelec
         )
     }, [options, searchText])
 
-    const handleOptionSelect = (option: string) => {
-        setSelected(option)
+    const handleOptionSelect = (optionId: number, option: string) => {
+        setSelected(optionId)
+        setSelectedName(option)
         setSearchText(option)
         toggle()
     }
@@ -67,7 +68,7 @@ export const Selector = ({ label, className, options, storeKey, isIcon }: ISelec
                             filteredOptions.map((option: any, index: number) => (
                                 <span
                                     key={index}
-                                    onClick={() => handleOptionSelect(option.name)}
+                                    onClick={() => handleOptionSelect(option.id, option.name)}
                                     className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}
                                 >
                                     {option.name}
