@@ -9,11 +9,12 @@ interface ISelectorProps {
     label: string
     className?: string
     storeKey: string
-    options: any
+    options: any[]
     isIcon?: boolean
+    isPerformer?: boolean
 }
 
-export const Selector = ({ label, className, options, storeKey, isIcon }: ISelectorProps) => {
+export const Selector = ({ label, className, options, storeKey, isIcon, isPerformer }: ISelectorProps) => {
     const { selected, setSelected, setSelectedName } = useSelectorStore(storeKey)
     const { toggle, isVisible } = useVisibleStore(storeKey)
     const [searchText, setSearchText] = useState('')
@@ -28,7 +29,13 @@ export const Selector = ({ label, className, options, storeKey, isIcon }: ISelec
 
     const filteredOptions = useMemo(() => {
         return options?.filter((option: { name: string }) =>
-            option.name.toLowerCase().includes(searchText.toLowerCase())
+            option?.name?.toLowerCase().includes(searchText.toLowerCase())
+        )
+    }, [options, searchText])
+
+    const filteredPerformers = useMemo(() => {
+        return options?.filter((option: { fullname: string }) =>
+            option?.fullname?.toLowerCase()?.includes(searchText.toLowerCase())
         )
     }, [options, searchText])
 
@@ -64,18 +71,34 @@ export const Selector = ({ label, className, options, storeKey, isIcon }: ISelec
             {isVisible && (
                 <div className="absolute w-full z-10 top-[48px] bg-white border border-[#737373] rounded-b-[8px] shadow-lg max-h-[200px] overflow-y-auto">
                     <div className="flex flex-col py-1">
-                        {filteredOptions.length > 0 ? (
-                            filteredOptions.map((option: any, index: number) => (
-                                <span
-                                    key={index}
-                                    onClick={() => handleOptionSelect(option.id, option.name)}
-                                    className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}
-                                >
-                                    {option.name}
-                                </span>
-                            ))
+                        {isPerformer ? (
+                            filteredPerformers.length > 0 ? (
+                                filteredPerformers.map((option: any, index: number) => (
+                                    <span
+                                        key={index}
+                                        onClick={() => handleOptionSelect(option.id, option.fullname)}
+                                        className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}
+                                    >
+                                        {option.fullname}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="px-4 py-2 text-[#737373]">Нет результатов</span>
+                            )
                         ) : (
-                            <span className="px-4 py-2 text-[#737373]">Нет результатов</span>
+                            filteredOptions.length > 0 ? (
+                                filteredOptions.map((option: any, index: number) => (
+                                    <span
+                                        key={index}
+                                        onClick={() => handleOptionSelect(option.id, option.name)}
+                                        className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}
+                                    >
+                                        {option.name}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="px-4 py-2 text-[#737373]">Нет результатов</span>
+                            )
                         )}
                     </div>
                 </div>

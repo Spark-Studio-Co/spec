@@ -30,6 +30,7 @@ export const AdminCreateApplication = () => {
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
     const [rawPhone, setRawPhone] = useState<string>("");
     const [commission, setCommission] = useState(0);
+    const [isNowChecked, setIsNowChecked] = useState(false);
 
     const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { rawValue } = inputMask(e, store.setPhone);
@@ -43,6 +44,21 @@ export const AdminCreateApplication = () => {
             year: 'numeric'
         })
     }
+
+    const handleNowCheck = () => {
+        if (!isNowChecked) {
+            const now = new Date();
+            const formattedTime = now.toTimeString().slice(0, 5);
+
+            setSelectedDate(now);
+            setSelectedTime(formattedTime);
+            updateDateTime(now, formattedTime);
+        } else {
+            setSelectedDate(null);
+            setSelectedTime("");
+        }
+        setIsNowChecked(!isNowChecked);
+    };
 
     const updateDateTime = (date: Date | null, time: string) => {
         if (date && time) {
@@ -226,6 +242,7 @@ export const AdminCreateApplication = () => {
                             e.stopPropagation()
                             e.preventDefault();
                             toggle()
+                            handleNowCheck()
                         }} />
                         <span className="text-dark text-[16px] font-[400]">Сейчас</span>
                     </div>
@@ -238,22 +255,14 @@ export const AdminCreateApplication = () => {
                                     width="w-full px-3.5"
                                     value={selectedTime}
                                     onChange={(e) => {
-                                        let value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-
-                                        if (value.length > 4) return; // Prevent extra digits
-
-                                        // Automatically insert ":" at position 2
+                                        let value = e.target.value.replace(/[^0-9]/g, '');
+                                        if (value.length > 4) return;
                                         if (value.length > 2) {
                                             value = value.slice(0, 2) + ':' + value.slice(2);
                                         }
-
-                                        // Validate hours & minutes
                                         const [hours, minutes] = value.split(':').map(Number);
                                         if (hours > 23 || (minutes !== undefined && minutes > 59)) return;
-
                                         setSelectedTime(value);
-
-                                        // Update date only if input is fully formed
                                         if (value.length === 5) {
                                             updateDateTime(selectedDate, value);
                                         }

@@ -5,8 +5,9 @@ import { Popup } from "../widgets/popup/popup";
 import { usePopupStore } from "../shared/model/popup-store";
 import { useTakenApplicationStore } from "../features/application-card/model/taken-application-store";
 import { useGetApplications } from "../entities/application/api/use-get-applications";
-
 import { useChangeStatus } from "../entities/application/api/use-change-status";
+import { useGetApplicationText } from "../entities/application/api/use-get-application-text";
+
 import { IChangeStatusRDO } from "../entities/application/api/rdo/change-status.rdo";
 
 export const ApplicationScreen = () => {
