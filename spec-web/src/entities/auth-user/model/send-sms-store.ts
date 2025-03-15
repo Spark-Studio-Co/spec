@@ -34,6 +34,7 @@ export const useSendSmsStore = create<ISendSmsStore>((set) => ({
                     console.log("Code received:", data);
                     setTimeout(() => {
                         navigate('/code-confirmation', { replace: true });
+                        set({ phone: '', isLoading: false, error: null });
                     }, 1500)
                 },
                 onError: (error: any) => {

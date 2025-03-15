@@ -59,19 +59,24 @@ export const CodeConfirmationScreen = () => {
 
     const handleSetValue = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+
+        const inputValue = e.target.value.replace(/\D/g, "").slice(0, 1); // Allow only one numeric character
         const newValues = [...values];
-        newValues[index] = e.target.value || "";
+
+        if (inputValue) {
+            newValues[index] = inputValue;
+            if (index < 5) {
+                inputRefs.current[index + 1]?.focus(); // Move to next input
+            }
+        } else {
+            newValues[index] = "";
+            if (index > 0) {
+                inputRefs.current[index - 1]?.focus(); // Move to previous input on delete
+            }
+        }
+
         setValues(newValues);
-        setDisabled(newValues.some(val => val === ""));
-        const inputValue = e.target.value.replace(/\D/g, "").slice(0, 1);
-
-        if (inputValue && index < 6 && inputRefs.current[index + 1]) {
-            inputRefs.current[index + 1]?.focus();
-        }
-
-        if (!inputValue && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
+        setDisabled(newValues.some(val => val === "")); // Disable button if any field is empty
     };
 
     let formattedValue = values.join("");
@@ -121,13 +126,18 @@ export const CodeConfirmationScreen = () => {
                         Для ввода кода перейдите в Telegram
                     </span>
                     <div className="flex gap-1 flex-row justify-between w-full">
-                        {Array(6).fill(null).map((_, index) => (
+                        {values.map((val, index) => (
                             <SingleValueInput
                                 key={index}
-                                ref={el => { inputRefs.current[index] = el; }}
+                                ref={(el) => { inputRefs.current[index] = el; }}
                                 placeholder="X"
-                                value={values[index] || ""}
+                                value={val}
                                 onChange={handleSetValue(index)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Backspace" && !values[index] && index > 0) {
+                                        inputRefs.current[index - 1]?.focus(); // Move back when deleting empty input
+                                    }
+                                }}
                             />
                         ))}
                     </div>
