@@ -8,12 +8,12 @@ import { useAuthData } from "../entities/auth-user/api/use-auth-data"
 export const ArchiveScreen = () => {
     // Group all useState hooks together
     const [currentCard, setCurrentCard] = useState<number | null>(null)
-    
+
     // Group all custom hooks together
     const { userId } = useAuthData()
     const { data, isLoading } = useGetArchive()
     const { mutate, isPending: payLoading } = usePayComission()
-    
+
     // Derived state after hooks
     const userIdNumber = userId ? Number(userId) : 0
 

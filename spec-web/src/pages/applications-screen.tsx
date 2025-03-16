@@ -8,15 +8,20 @@ import { useGetApplications } from "../entities/application/api/use-get-applicat
 import { useChangeStatus } from "../entities/application/api/use-change-status";
 // import { useGetApplicationText } from "../entities/application/api/use-get-application-text";
 
+import { useNavigate } from "react-router";
+
 import { IChangeStatusRDO } from "../entities/application/api/rdo/change-status.rdo";
+import { useGetArchive } from "../entities/archive/api/use-get-archive";
 
 export const ApplicationScreen = () => {
+    const navigate = useNavigate()
     const [refundReason, setRefundReason] = useState<string>("")
     const [denyReason, setDenyReason] = useState<string>("")
 
     const { mutate } = useChangeStatus()
 
     const { data: applications, isLoading, error, refetch } = useGetApplications();
+    const { data: archive } = useGetArchive()
 
     const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore("phone-popup");
     const { isOpen: isOpenTaken, open: openTakenPopup } = usePopupStore("taken-popup");
@@ -33,10 +38,14 @@ export const ApplicationScreen = () => {
 
     const handleTakeApplication = (index: number, phone: string) => {
         if (taken.includes(index)) return;
-        if (taken.length >= 1) {
+
+        const unpaidApplications = archive.filter((app: any) => app.balance_history?.length === 0);
+
+        if (unpaidApplications.length >= 2) {
             openTakenPopup();
             return;
         }
+
         setPhoneValue(phone);
         openPhonePopup();
         setTaken(index);
@@ -101,41 +110,52 @@ export const ApplicationScreen = () => {
         )
     }
 
+    let notPaid = archive
+        .filter((app: any) => app.balance_history?.length === 0)
+        .map((app: any) => app.address)
+        .join(', ') || null
 
 
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {applications?.map((application: any, index: number) => {
-                    return (
-                        <ApplicationCard
-                            key={index}
-                            {...application}
-                            index={index}
-                            onReject={() => {
-                                setCurrentCard(index);
-                                openRejectPopup();
-                            }}
-                            onRefund={() => {
-                                setCurrentCard(index);
-                                openRefundPopup();
-                            }}
-                            onClick={() => {
-                                setCurrentCard(index);
-                                if (application.status_id === 3) {
-                                    openCompletePopup();
-                                } else if (application.status_id === 2) {
-                                    openExecutionPopup();
-                                } else if (taken.length >= 1) {
-                                    openTakenPopup();
-                                } else if (application.status_id === 1) {
-                                    handleChangeStatus(application.id, { status_id: 2 })
-                                    handleTakeApplication(index, application.phone);
-                                }
-                            }}
-                        />
-                    );
-                })}
+                {applications?.slice()
+                    .sort((a: any, b: any) => (a.status_id === 2 && a.status_id === 3 ? -1 : b.status_id === 2 ? 1 : 0))
+                    .map((application: any, index: number) => {
+                        return (
+                            <ApplicationCard
+                                key={index}
+                                {...application}
+                                index={index}
+                                onReject={() => {
+                                    setCurrentCard(index);
+                                    openRejectPopup();
+                                }}
+                                onRefund={() => {
+                                    setCurrentCard(index);
+                                    openRefundPopup();
+                                }}
+                                onClick={() => {
+                                    setCurrentCard(index);
+                                    if (application.status_id === 3) {
+                                        openCompletePopup();
+                                    } else if (application.status_id === 2) {
+                                        openExecutionPopup();
+                                    } else if (taken.length >= 1) {
+                                        openTakenPopup();
+                                    } else if (application.status_id === 1) {
+                                        const unpaidApplications = archive.filter((app: any) => app.balance_history?.length === 0);
+                                        if (unpaidApplications.length >= 2) {
+                                            openTakenPopup();
+                                        } else {
+                                            handleChangeStatus(application.id, { status_id: 2 })
+                                            handleTakeApplication(index, application.phone);
+                                        }
+                                    }
+                                }}
+                            />
+                        );
+                    })}
             </div>
 
             {isOpen && (
@@ -162,10 +182,11 @@ export const ApplicationScreen = () => {
             {isOpenTaken && (
                 <Popup
                     isCenter={false}
-                    title={`Для взятия следующего заказа, оплатите комиссию за предыдущий заказ по адресу ${takenApplication?.address}`}
+                    title={`Для взятия следующего заказа, оплатите комиссию за предыдущие заказы по адресу ${notPaid}`}
                     storeKey="taken-popup"
                     closeLabel="Отмена"
                     actionLabel={takenApplication?.comission || "Продолжить"}
+                    onClick={() => navigate('/archive')}
                 />
             )}
 

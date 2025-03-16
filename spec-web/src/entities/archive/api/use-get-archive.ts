@@ -6,6 +6,10 @@ export const useGetArchive = () => {
         queryKey: ["archive"],
         queryFn: archiveData,
         staleTime: 1000 * 60 * 5,
-        retry: 2
+        retry: 2,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
+        refetchInterval: 10000,
+        refetchIntervalInBackground: true,
     })
 }

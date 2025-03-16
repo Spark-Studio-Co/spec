@@ -70,7 +70,7 @@ export const AdminApplicationCard = ({ title, description, price_min, price_max,
                     </div>
                 </>
             }
-            <div className="flex flex-row justify-between mt-2">
+            <div className={` ${status_id === 2 && 'mt-2'} flex flex-row justify-between`}>
                 <span className={`text-[16px] font-[500] ${status_id === 2 && 'text-[#00A6F4]'} `}>
                     {status_id === 2 && 'Взят'}
                 </span>

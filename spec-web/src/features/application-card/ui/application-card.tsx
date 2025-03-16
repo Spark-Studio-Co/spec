@@ -25,9 +25,10 @@ interface IApplicationCard {
     onReject?: () => void
     index: number
     isPaid?: boolean
+    emergency_call: boolean
 }
 
-export const ApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, onRefund, onReject, status_id }: IApplicationCard) => {
+export const ApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, onRefund, onReject, status_id, emergency_call }: IApplicationCard) => {
     const popupStore = usePopupStore('phone-popup')
     const [showButton, setShowButton] = useState<boolean>(false)
 
@@ -49,7 +50,7 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
 
     return (
         <div
-            className="w-full min-h-[80px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer"
+            className="w-full py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer"
             onClick={(e) => {
                 if (e.target === e.currentTarget || e.target instanceof Element && e.currentTarget.contains(e.target) && !e.target.closest('button, a')) {
                     setShowButton(!showButton);
@@ -61,8 +62,7 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
             <div className="flex flex-row items-center mt-2 gap-x-2">
                 <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
                 <span className="text-[14px] font-[400] text-dark">
-                    Комиссия {Math.round(parseInt(price_min) / parseInt(commission))} -
-                    {Math.round(parseInt(price_max) / parseInt(commission))} ₸
+                    Комиссия {commission} ₸
                 </span>
             </div>
             {(status_id === 2 || status_id === 3) && (
@@ -79,11 +79,12 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
                 <NavigationIcon />
                 <span className="text-[16px] text-[#007AFF] font-[400]">{address}</span>
             </div>
-            <div className="flex flex-row justify-between mt-4">
+            <div className={`${status_id === 2 && 'mt-2'} flex flex-row justify-between`}>
                 <span className={`text-[16px] font-[500] ${status_id === 2 && 'text-[#00A6F4]'} `}>
                     {status_id === 2 && 'Взят'}
                 </span>
             </div>
+            {emergency_call && <span className="text-[16px] text-[#262626] font-[400] mt-2">🔥 Аварийный вызов</span>}
             {(status_id === 2 || status_id === 3) && (
                 <div className="w-full flex flex-row items-center justify-between mt-5 gap-x-2">
                     <Button label="Возврат" variant="transparent" height="h-[36px]" onClick={onRefund} />
