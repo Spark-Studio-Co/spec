@@ -28,7 +28,6 @@ export const RegistrationScreen = () => {
         const phoneWithPlus = `+${rawPhone}`;
         console.log(phoneWithPlus);
         submit(e, mutate, () => navigate('/code-confirmation'), phoneWithPlus, saveRequestId);
-        setRawPhone('');
         setDisabled(false)
         error ? setDisabled(false) : setDisabled(true);
     };

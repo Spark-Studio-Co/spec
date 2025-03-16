@@ -6,16 +6,17 @@ interface AuthState {
     token: string | null;
     requestId: string | null;
     role: string | null;
-    userId: string | null;
+    userId: number | null;
     saveToken: (token: string) => void;
     removeToken: () => void;
     saveRequestId: (requestId: string) => void;
     removeRequestId: () => void;
     loadToken: () => Promise<string | null>;
-    saveUserId: (userId: string) => void;
+    saveUserId: (userId: number) => void;
     removeUserId: () => void;
     saveRole: (role: string) => void;
     removeRole: () => void;
+    logout: () => void
 }
 
 const useAuthStore = create<AuthState>()(
@@ -43,7 +44,7 @@ const useAuthStore = create<AuthState>()(
                 return get().token;
             },
 
-            saveUserId: (userId: string) => set({ userId }),
+            saveUserId: (userId: number) => set({ userId }),
 
             removeUserId: () => set({ userId: null }),
 
@@ -59,6 +60,18 @@ const useAuthStore = create<AuthState>()(
                     localStorage.setItem("auth-storage", JSON.stringify({ state: get(), version: 0 }));
                 }, 0);
 
+                reactQueryClient.resetQueries();
+                reactQueryClient.clear();
+            },
+
+            logout: () => {
+                set({
+                    token: null,
+                    requestId: null,
+                    role: null,
+                    userId: null,
+                });
+                localStorage.removeItem("auth-storage");
                 reactQueryClient.resetQueries();
                 reactQueryClient.clear();
             },

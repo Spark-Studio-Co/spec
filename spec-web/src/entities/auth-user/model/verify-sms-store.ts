@@ -13,7 +13,7 @@ interface IVerifySmsStore {
         request_id: string,
         user_agent: string,
         saveToken: (token: string) => void,
-        saveUserId: (userId: string) => void,
+        saveUserId: (userId: number) => void,
         navigate: () => void,
     ) => void;
 }

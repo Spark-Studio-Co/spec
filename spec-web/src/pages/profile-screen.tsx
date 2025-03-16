@@ -11,12 +11,10 @@ import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 export const ProfileScreen = () => {
     const { phone } = useSendSmsStore()
     const { data: categories } = useGetCategories()
-    const { removeToken, removeRole } = useAuthData()
-    // const navigate = useNavigate()
+    const { logout } = useAuthData();
 
     const handleLogout = () => {
-        removeToken();
-        removeRole()
+        logout()
     };
 
     return (

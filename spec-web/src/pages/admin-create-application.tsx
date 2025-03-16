@@ -64,11 +64,9 @@ export const AdminCreateApplication = () => {
         if (date && time) {
             const [hours, minutes] = time.split(':').map(Number);
             if (!isNaN(hours) && !isNaN(minutes)) {
-                // Создаём новый объект даты в UTC+6
                 const localDate = new Date(date);
                 localDate.setHours(hours, minutes, 0, 0);
 
-                // ✅ НЕ конвертируем в UTC (оставляем в локальном времени)
                 const formattedDate = `${localDate.getFullYear()}-${(localDate.getMonth() + 1).toString().padStart(2, '0')}-${localDate.getDate().toString().padStart(2, '0')}T${localDate.getHours().toString().padStart(2, '0')}:${localDate.getMinutes().toString().padStart(2, '0')}`;
 
                 console.log("📌 Корректное время (UTC+6, без конвертации в UTC):", formattedDate);
@@ -86,6 +84,7 @@ export const AdminCreateApplication = () => {
     useEffect(() => {
         open()
     }, [])
+
 
     const navigate = useNavigate()
 
@@ -165,8 +164,8 @@ export const AdminCreateApplication = () => {
             commission: commission,
             phone: phoneWithPlus,
             status_id: 1,
-            creator_user_id: Number(userId),
-            performer_user_id: Number(userId),
+            creator_user_id: userId,
+            performer_user_id: userId,
             emergency_call: store.emergency
         }, {
             onSuccess: (data: any) => {
