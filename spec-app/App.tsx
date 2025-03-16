@@ -1,11 +1,25 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { AppNavigator } from "./app/AppNavigator";
+import { WebView } from 'react-native-webview';
+import { StyleSheet } from 'react-native';
+import Constants from 'expo-constants'
 
-export default function App() {
+export const WebViewScreen = () => {
     return (
-        <NavigationContainer>
-            <AppNavigator />
-        </NavigationContainer>
-    );
+        <WebView
+            style={styles.container}
+            source={{ uri: 'https://kazonline.kz' }}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            sharedCookiesEnabled={true}
+            thirdPartyCookiesEnabled={true}
+            cacheEnabled={true}
+        />
+    )
 }
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: Constants.statusBarHeight,
+    },
+});
