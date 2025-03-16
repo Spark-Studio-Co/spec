@@ -1,25 +1,7 @@
-import { WebView } from 'react-native-webview';
-import { StyleSheet } from 'react-native';
-import Constants from 'expo-constants'
+import WebViewScreen from "./app/index";
 
-export const WebViewScreen = () => {
+export default function App() {
     return (
-        <WebView
-            style={styles.container}
-            source={{ uri: 'https://kazonline.kz' }}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            sharedCookiesEnabled={true}
-            thirdPartyCookiesEnabled={true}
-            cacheEnabled={true}
-        />
-    )
+        <WebViewScreen />
+    );
 }
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        marginTop: Constants.statusBarHeight,
-    },
-});
