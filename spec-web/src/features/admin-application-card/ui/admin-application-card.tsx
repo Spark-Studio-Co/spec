@@ -21,9 +21,10 @@ interface IApplicationCard {
     performer_name: string
     performer_phone: string
     users_tasks_performer_user_idTousers: any
+    emergency_call: boolean
 }
 
-export const AdminApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, status_id, users_tasks_performer_user_idTousers }: IApplicationCard) => {
+export const AdminApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, status_id, users_tasks_performer_user_idTousers, emergency_call }: IApplicationCard) => {
     const isoDate = execute_at;
     const humanReadable = new Intl.DateTimeFormat("ru-RU", {
         year: "numeric",
@@ -57,8 +58,14 @@ export const AdminApplicationCard = ({ title, description, price_min, price_max,
             </div>
             <div className="flex flex-row items-center mt-2 gap-x-1">
                 <NavigationIcon />
-                <span className="text-[16px] text-[#007AFF] font-[400]">{address}</span>
-            </div>
+                <a
+                    href={`https://2gis.ru/search/${encodeURIComponent(address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[16px] text-[#007AFF] font-[400] underline"
+                >
+                    {address}
+                </a>            </div>
             {status_id === 2 && users_tasks_performer_user_idTousers &&
                 <>
                     <span className="text-dark font-[400] text-[14px] mt-2">
@@ -75,6 +82,7 @@ export const AdminApplicationCard = ({ title, description, price_min, price_max,
                     {status_id === 2 && 'Взят'}
                 </span>
             </div>
+            {emergency_call && <span className="text-[16px] text-[#262626] font-[400] mt-2">🔥 Аварийный вызов</span>}
             <Button
                 label={'Начать исполнять'}
                 variant="default"

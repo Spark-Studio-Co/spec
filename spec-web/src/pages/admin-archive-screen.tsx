@@ -1,56 +1,15 @@
 import { AdminArchiveCard } from "../features/admin-archive-card/ui/admin-archive-card";
 import { Checkbox } from "../shared/ui/checkbox/checkbox";
 
+import { useGetArchive } from "../entities/archive/api/use-get-archive";
+import { useCheckboxStore } from "../shared/model/checkbox-store";
+
 export const AdminArchiveScreen = () => {
-    const applications = [
-        {
-            id: 1,
-            title: 'Двухкомнатная квартира',
-            description: 'Площадь 54м2, 2/5 этаж, 2 спальни, 1 ванная',
-            price_min: '15000000',
-            price_max: '15000000',
-            commission: '150000',
-            phone: '+7 (777) 123-45-67',
-            execute_at: '2024-03-06T14:30:00Z',
-            address: 'г. Астана, ул. Абая 123, кв. 45',
-            status_id: 6,
-            performer_name: 'Турсунбаев Ержан Кайратович',
-            performer_phone: '+7 (777) 999-88-77',
-            balance_history: [1],
-        },
-        {
-            id: 2,
-            title: 'Земельный участок',
-            description: 'Участок 10 соток под ИЖС, все коммуникации',
-            price_min: '35000000',
-            price_max: '35000000',
-            commission: '350000',
-            phone: '+7 (777) 234-56-78',
-            execute_at: '2024-03-05T10:15:00Z',
-            address: 'г. Астана, мкр. Самал-2, уч. 15',
-            status_id: 4, // refunded
-            performer_name: 'Сагинтаев Аскар Муратович',
-            performer_phone: '+7 (777) 111-22-33',
-            balance_history: [],
-            comment: 'Клиент отказался от услуги из-за высокой стоимости',
-        },
-        {
-            id: 3,
-            title: 'Коммерческое помещение',
-            description: 'Торговое помещение 120м2, первый этаж, отдельный вход',
-            price_min: '45000000',
-            price_max: '45000000',
-            commission: '450000',
-            phone: '+7 (777) 345-67-89',
-            execute_at: '2024-03-04T16:45:00Z',
-            address: 'г. Астана, пр. Достык 89, ТЦ "Центр"',
-            status_id: 5, // rejected
-            performer_name: 'Искакова Айгерим Болатовна',
-            performer_phone: '+7 (777) 444-55-66',
-            balance_history: [],
-            comment: 'Клиент выбрал другую компанию',
-        }
-    ];
+    const { data: archive, isLoading, error } = useGetArchive()
+    const { checked } = useCheckboxStore('archive')
+
+    if (isLoading) return <p className="text-center">Загрузка заявок...</p>;
+    if (error) return <p className="text-red-500 text-center">Ошибка: {error.message}</p>;
 
     return (
         <div className="flex flex-col gap-3">
@@ -58,13 +17,23 @@ export const AdminArchiveScreen = () => {
                 <span className="text-dark font-[400] text-[16px]">Неоплаченные</span>
                 <Checkbox storeKey="archive" />
             </div>
-
-            {applications.map((application) => (
-                <AdminArchiveCard
-                    key={application.id}
-                    {...application}
-                />
-            ))}
+            {archive.filter((app: any) => app?.balance_history?.length === 0) && checked && <p className="text-center absolute top-1/2 left-1/2 -translate-x-1/2">Все заявки оплачены</p>}
+            {checked ?
+                <div className="flex flex-col gap-3">
+                    {archive.filter((app: any) => app.balance_history?.length === 0).map((application: any, index: number) => (
+                        <AdminArchiveCard
+                            key={index}
+                            {...application}
+                        />
+                    ))}
+                </div> :
+                archive.map((application: any, index: number) => (
+                    <AdminArchiveCard
+                        key={index}
+                        {...application}
+                    />
+                ))
+            }
         </div>
     );
 };

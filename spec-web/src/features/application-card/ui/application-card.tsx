@@ -77,8 +77,14 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
             </div>
             <div className="flex flex-row items-center mt-2 gap-x-1">
                 <NavigationIcon />
-                <span className="text-[16px] text-[#007AFF] font-[400]">{address}</span>
-            </div>
+                <a
+                    href={`https://2gis.ru/search/${encodeURIComponent(address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[16px] text-[#007AFF] font-[400] underline"
+                >
+                    {address}
+                </a>            </div>
             <div className={`${status_id === 2 && 'mt-2'} flex flex-row justify-between`}>
                 <span className={`text-[16px] font-[500] ${status_id === 2 && 'text-[#00A6F4]'} `}>
                     {status_id === 2 && 'Взят'}

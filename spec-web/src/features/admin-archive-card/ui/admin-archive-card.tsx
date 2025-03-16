@@ -40,7 +40,7 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
                 <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
-                <span className="text-[14px] font-[400] text-dark">Комиссия {parseInt(price_min) / parseInt(commission)} - {parseInt(price_max) / parseInt(commission)} ₸</span>
+                <span className="text-[14px] font-[400] text-dark">Комиссия {commission} ₸</span>
             </div>
             <div className="flex flex-row items-center gap-x-1.5">
                 <PhoneIcon />
@@ -52,8 +52,14 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
             </div>
             <div className="flex flex-row items-center mt-2 gap-x-1">
                 <NavigationIcon />
-                <span className="text-[16px] text-[#007AFF] font-[400]">{address}</span>
-            </div>
+                <a
+                    href={`https://2gis.ru/search/${encodeURIComponent(address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[16px] text-[#007AFF] font-[400] underline"
+                >
+                    {address}
+                </a>            </div>
 
             <span className="text-dark font-[400] text-[14px] mt-4">
                 {performer_name}
@@ -73,15 +79,15 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
                 }
             </div>
             {status_id === 4 &&
-                <div className="flex flex-row items-center gap-x-1.5 mt-3">
+                <div className="flex flex-row items-start gap-x-1.5 mt-3">
                     <CommentIcon />
-                    <span className="text-[16px] text-[#404040] font-[400] -mt-0.5">{comment}</span>
+                    <span className="text-[16px] text-[#404040] font-[400] -mt-1.5">{comment}</span>
                 </div>
             }
             {status_id === 5 &&
-                <div className="flex flex-row items-center gap-x-1.5 mt-3">
+                <div className="flex flex-row items-start gap-x-1.5 mt-3">
                     <CommentIcon />
-                    <span className="text-[16px] text-[#404040] font-[400] -mt-0.5">{comment}</span>
+                    <span className="text-[16px] text-[#404040] font-[400] -mt-1.5">{comment}</span>
                 </div>
             }
         </div>
