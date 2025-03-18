@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "696940817856",
+    "project_id": "spec-612cd",
+    "storage_bucket": "spec-612cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696940817856:android:01b08d64f4b31424ccac25",
+        "android_client_info": {
+          "package_name": "kz.spec"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuCU7pQVaxrn-gShGJ_ZR898L4_0QqUMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

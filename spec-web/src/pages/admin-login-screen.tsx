@@ -8,12 +8,12 @@ import { useNavigate } from 'react-router';
 import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 
 export const AdminLogin = () => {
-    const { mutate, isPending } = useAdminLogin()
+    const { mutate, isPending, error } = useAdminLogin()
     const { username, password, setUsername, setPassword } = useAdminLoginStore()
     const { saveToken, saveRole } = useAuthData();
     const navigate = useNavigate();
 
-    const isDisabled = !username.trim() || !password.trim();
+    const isDisabled = !username.trim() || !password.trim() || isPending;
 
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
@@ -28,15 +28,14 @@ export const AdminLogin = () => {
                         console.log("Role:", data?.admin?.role)
                         navigate('/admin/application');
                     }
+                    setUsername('');
+                    setPassword('');
                 },
                 onError: (error: any) => {
-                    console.log(error.message)
-                    throw new error
+                    console.log(error.message);
                 }
             }
         )
-        setUsername('');
-        setPassword('');
     }
 
     return (
@@ -58,6 +57,7 @@ export const AdminLogin = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
+            {error && <span className="text-red-500 text-sm mt-4 w-full items-center justify-center flex">Неверный логин или пароль</span>}
             <Button
                 variant={isDisabled ? 'disabled' : 'default'}
                 label={isPending ? "Загрузка..." : "Войти"}
