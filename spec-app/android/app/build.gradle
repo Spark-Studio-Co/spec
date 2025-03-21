@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.senseigai.specapp'
+    namespace 'kz.spec'
     defaultConfig {
-        applicationId 'com.senseigai.specapp'
+        applicationId 'kz.spec'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

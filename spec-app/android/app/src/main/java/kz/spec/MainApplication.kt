@@ -1,4 +1,4 @@
-package com.senseigai.specapp
+package kz.spec
 
 import android.app.Application
 import android.content.res.Configuration

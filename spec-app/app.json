@@ -17,8 +17,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.jpg",
         "backgroundColor": "#ffffff"
       },
-      "package": "kz.spec",
-      "googleServicesFile": "./google-services.json"
+      "package": "kz.spec"
     },
     "web": {
       "bundler": "metro",
@@ -40,14 +39,9 @@
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
-          "color": "#ffffff",
-          "sounds": [
-            "./assets/sounds/notification.wav"
-          ]
+          "color": "#ffffff"
         }
-      ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/messaging"
+      ]
     ],
     "experiments": {
       "typedRoutes": true

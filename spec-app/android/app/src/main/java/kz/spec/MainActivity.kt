@@ -1,4 +1,4 @@
-package com.senseigai.specapp
+package kz.spec
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
