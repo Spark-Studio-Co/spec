@@ -10,6 +10,7 @@ import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 import { useSendCode } from "../entities/auth-user/api/use-verify-sms";
 
 import BackArrowIcon from "../shared/assets/icons/back-arrow-icon";
+import { FormattedPhone } from "../shared/ui/formatted-phone/formatted-phone";
 
 export const CodeConfirmationScreen = () => {
     const [userAgent, setUserAgent] = useState("");
@@ -76,7 +77,7 @@ export const CodeConfirmationScreen = () => {
         }
 
         setValues(newValues);
-        setDisabled(newValues.some(val => val === "")); // Disable button if any field is empty
+        setDisabled(newValues.some(val => val === ""));
     };
 
     let formattedValue = values.join("");
@@ -119,7 +120,7 @@ export const CodeConfirmationScreen = () => {
                     Мы отправили SMS на номер
                 </span>
                 <span className="text-[20px] text-dark font-normal leading-[28px] mt-3">
-                    {phone}
+                    <FormattedPhone phone={phone} />
                 </span>
                 <div className="w-full mt-8">
                     <span className="text-dark font-medium text-[16px] leading-[28px] w-full items-center justify-center flex mb-2">

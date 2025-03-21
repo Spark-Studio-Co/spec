@@ -81,19 +81,19 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
                     <span className="text-[14px] font-[400] flex flex-row gap-x-1 items-center text-[#262626]"><div className="w-[8px] h-[8px] rounded-full bg-[#008235]" />Оплачено</span>
                 }
             </div>
-            {(balance_history?.length === 0 || (balance_history && balance_history.includes(id))) && (
+            {status_id === 6 && (balance_history?.length === 0 || (balance_history && balance_history.includes(id))) && (
                 <Button label={isLoading ? 'Загрузка...' : `Оплатить  ${commission} ₸`} variant={isLoading ? 'disabled' : 'default'} height="h-[36px]" className='mt-5' onClick={onClick} />
             )}
             {status_id === 4 &&
-                <div className="flex flex-row items-start gap-x-1.5 -mt-1.5">
+                <div className="flex flex-row items-start gap-x-1.5 mt-3">
                     <CommentIcon />
-                    <span className="text-[16px] text-[#404040] font-[400] -mt-0.5">{comment}</span>
+                    <span className="text-[16px] text-[#404040] font-[400] -mt-1.5">{comment}</span>
                 </div>
             }
             {status_id === 5 &&
-                <div className="flex flex-row items-start gap-x-1.5 -mt-1.5">
+                <div className="flex flex-row items-start gap-x-1.5 mt-3">
                     <CommentIcon />
-                    <span className="text-[16px] text-[#404040] font-[400] -mt-0.5">{comment}</span>
+                    <span className="text-[16px] text-[#404040] font-[400] -mt-1.5">{comment}</span>
                 </div>
             }
         </div>

@@ -3,7 +3,7 @@ import NavigationIcon from "../../../shared/assets/icons/navigation-icon"
 
 interface IProfileHeader {
     name: string
-    phone: string
+    phone: React.ReactNode
     city: string
 }
 

@@ -40,6 +40,7 @@ export const Selector = ({ label, className, options, storeKey, isIcon, isPerfor
     }, [options, searchText])
 
     const handleOptionSelect = (optionId: number, option: string) => {
+        console.log(`Selected option: ID=${optionId}, Name=${option}`);
         setSelected(optionId)
         setSelectedName(option)
         setSearchText(option)
@@ -90,7 +91,10 @@ export const Selector = ({ label, className, options, storeKey, isIcon, isPerfor
                                 filteredOptions.map((option: any, index: number) => (
                                     <span
                                         key={index}
-                                        onClick={() => handleOptionSelect(option.id, option.name)}
+                                        onClick={() => {
+                                            console.log('Selecting city with ID:', option.id, 'Name:', option.name);
+                                            handleOptionSelect(option.id, option.name);
+                                        }}
                                         className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}
                                     >
                                         {option.name}

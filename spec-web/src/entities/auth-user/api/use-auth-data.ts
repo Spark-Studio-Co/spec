@@ -31,7 +31,7 @@ const useAuthStore = create<AuthState>()(
 
             removeToken: () => {
                 set({ token: null });
-                localStorage.removeItem("auth-storage"); // ✅ Ensure full removal
+                localStorage.removeItem("auth-storage");
                 reactQueryClient.resetQueries();
                 reactQueryClient.clear();
             },

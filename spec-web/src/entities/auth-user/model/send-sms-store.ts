@@ -18,7 +18,10 @@ export const useSendSmsStore = create<ISendSmsStore>((set) => ({
         e.preventDefault();
 
         set({ isLoading: true, error: null });
-
+        
+        // Ensure we're using the raw phone number for the API call
+        console.log('Sending to API:', rawPhone);
+        
         mutate(
             { phone: rawPhone },
             {
