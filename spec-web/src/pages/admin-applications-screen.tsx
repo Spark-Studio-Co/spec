@@ -3,7 +3,6 @@ import { AdminApplicationCard } from "../features/admin-application-card/ui/admi
 import { Popup } from "../widgets/popup/popup";
 import { Selector } from '../shared/ui/selector/selector';
 
-
 import { usePopupStore } from "../shared/model/popup-store";
 import { useSelectorStore } from "../shared/model/selector-store";
 import { useGetApplications } from '../entities/application/api/use-get-applications';
@@ -14,10 +13,12 @@ import { useTakeApplication } from '../entities/application/api/use-take-applica
 export const AdminApplicationScreen = () => {
     const { mutate } = useTakeApplication()
     const { data: applications } = useGetApplications()
-    const { data: performers } = useGetPerformers()
+    const [cityId, setCityId] = useState<number>(0)
+    const { data: performers } = useGetPerformers('', cityId)
     const { selected, setSelectedName } = useSelectorStore('performerSelector')
     const performerSelector = usePopupStore('performerSelector')
     const [currentCard, setCurrentCard] = useState<number | null>(null)
+
 
     const handlePerformerSelect = () => {
         mutate({
@@ -44,6 +45,7 @@ export const AdminApplicationScreen = () => {
                         users_tasks_performer_user_idTousers={application?.task?.users_tasks_performer_user_idTousers}                        {...application}
                         onClick={() => {
                             setCurrentCard(application.id)
+                            setCityId(application.city_id)
                             performerSelector.open();
                         }}
                     />

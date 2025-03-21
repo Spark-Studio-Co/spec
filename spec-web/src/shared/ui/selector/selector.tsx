@@ -75,13 +75,16 @@ export const Selector = ({ label, className, options, storeKey, isIcon, isPerfor
                         {isPerformer ? (
                             filteredPerformers.length > 0 ? (
                                 filteredPerformers.map((option: any, index: number) => (
-                                    <span
-                                        key={index}
-                                        onClick={() => handleOptionSelect(option.id, option.fullname)}
-                                        className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}
-                                    >
-                                        {option.fullname}
-                                    </span>
+                                    <div onClick={() => handleOptionSelect(option.id, option.fullname)} key={index} className={`flex flex-col px-4 py-2 hover:bg-gray-100 cursor-pointer ${selected === option ? 'bg-gray-50' : ''}`}>
+                                        <span
+                                        >
+                                            {option.fullname}
+                                        </span>
+                                        <span className="mt-1"
+                                        >
+                                            {option.phone}
+                                        </span>
+                                    </div>
                                 ))
                             ) : (
                                 <span className="px-4 py-2 text-[#737373]">Нет результатов</span>
