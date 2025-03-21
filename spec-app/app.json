@@ -10,8 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.senseigai.specapp",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "com.senseigai.specapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +30,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-icon.jpg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
