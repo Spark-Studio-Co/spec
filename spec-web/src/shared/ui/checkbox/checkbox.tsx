@@ -11,10 +11,10 @@ export const Checkbox = ({ onClick, storeKey }: ICheckboxProps) => {
     const { checked, setChecked } = useCheckboxStore(storeKey)
 
     const handleCheckbox = (e: React.MouseEvent) => {
+        setChecked();
         if (onClick) {
-            onClick(e)
+            onClick(e);
         }
-        setChecked()
     }
 
     return (

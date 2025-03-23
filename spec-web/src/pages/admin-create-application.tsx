@@ -19,6 +19,7 @@ import { useCreateApplication } from '../entities/application-creation/api/use-c
 import { useSelectorStore } from '../shared/model/selector-store';
 import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 import { inputMask } from '../shared/utils/inputMask';
+import { useCheckboxStore } from '../shared/model/checkbox-store';
 
 
 export const AdminCreateApplication = () => {
@@ -30,7 +31,6 @@ export const AdminCreateApplication = () => {
     const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
     const [rawPhone, setRawPhone] = useState<string>("");
     const [commission, setCommission] = useState(0);
-    const [isNowChecked, setIsNowChecked] = useState(false);
 
     const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { rawValue } = inputMask(e, store.setPhone);
@@ -46,7 +46,7 @@ export const AdminCreateApplication = () => {
     }
 
     const handleNowCheck = () => {
-        if (!isNowChecked) {
+        if (!timeStore.setChecked) {
             const now = new Date();
             const formattedTime = now.toTimeString().slice(0, 5);
 
@@ -57,8 +57,9 @@ export const AdminCreateApplication = () => {
             setSelectedDate(null);
             setSelectedTime("");
         }
-        setIsNowChecked(!isNowChecked);
+        timeStore.setChecked();
     };
+
 
     const updateDateTime = (date: Date | null, time: string) => {
         if (date && time) {
@@ -80,9 +81,20 @@ export const AdminCreateApplication = () => {
     const { selected: cityId } = useSelectorStore('citiesSelector');
     const { selected: categoryId, selectedName: title } = useSelectorStore('categoriesSelector');
     const store = useCreateApplicationStore();
+    const emergencyStore = useCheckboxStore('emergency');
+    const timeStore = useCheckboxStore('time');
 
     useEffect(() => {
         open()
+
+        if (timeStore.checked) {
+            const now = new Date();
+            const formattedTime = now.toTimeString().slice(0, 5);
+
+            setSelectedDate(now);
+            setSelectedTime(formattedTime);
+            updateDateTime(now, formattedTime);
+        }
     }, [])
 
 
@@ -121,16 +133,19 @@ export const AdminCreateApplication = () => {
     }
 
     const calculateCommission = (min: number, max: number) => {
-        if (min > 5000 && max < 7000) return 1000;
-        if (min > 7000 && max < 10000) return 2000;
-        if (min > 10000 && max < 30000) return 3000;
-        if (min > 30000 && max < 50000) return 5000;
-        return max * 0.1;
+        if (min < 7000) return 1000;
+        if (min >= 7000 && min < 10000) return 2000;
+        if (min >= 10000 && min < 30000) return 3000;
+        if (min >= 30000 && min < 50000) return 5000;
+        if (min >= 50000) return Math.round(max * 0.1);
+        return 0;
     };
 
     useEffect(() => {
         if (store.priceMin && store.priceMax) {
             setCommission(calculateCommission(store.priceMin, store.priceMax));
+        } else {
+            setCommission(0)
         }
     }, [store.priceMin, store.priceMax]);
 
@@ -171,7 +186,17 @@ export const AdminCreateApplication = () => {
             onSuccess: (data: any) => {
                 console.log('Заявка успешно создана:', data)
                 alert('Заявка успешно создана')
-                navigate('/admin/applications')
+                navigate('/admin/applications');
+                store.setAddress('');
+                store.setDescription('');
+                store.setPriceMin(0);
+                store.setPriceMax(0);
+                store.setPhone('');
+                store.setDate('');
+                setRawPhone('');
+                setSelectedDate(null);
+                setSelectedTime('');
+                setCommission(0);
             },
             onError: (error) => {
                 console.error('Ошибка при создании заявки:', error)
@@ -180,6 +205,13 @@ export const AdminCreateApplication = () => {
         })
     }
 
+    const handleSetEmergency = (e: any) => {
+        e.stopPropagation();
+        e.preventDefault();
+        emergencyStore.setChecked();
+        store.setEmergency()
+        console.log(store.emergency)
+    }
 
     return (
         <form className="flex flex-col" onSubmit={handleSubmit}>
@@ -226,26 +258,24 @@ export const AdminCreateApplication = () => {
                         className="mt-2"
                     />
                 </div>
-                <div className="flex flex-row items-center mt-5 gap-x-2">
-                    <Checkbox storeKey="emergency" onClick={(e: any) => {
-                        e.stopPropagation()
-                        e.preventDefault();
-                        store.setEmergency()
-                    }} />
+                <div className="flex flex-row items-center mt-5 gap-x-2" onClick={(e: any) => {
+                    handleSetEmergency(e)
+                }}>
+                    <Checkbox storeKey="emergency" />
                     <span className="text-dark text-[16px] font-[400]">🔥 Аварийный вызов</span>
                 </div>
                 <span className="mt-4 block text-[#171717] font-[500] text-[18px]">Время</span>
                 <div className="mt-3 flex flex-row items-center w-full">
-                    <div className="flex flex-row items-center gap-x-2">
-                        <Checkbox storeKey="time" onClick={(e: any) => {
-                            e.stopPropagation()
-                            e.preventDefault();
-                            toggle()
-                            handleNowCheck()
-                        }} />
-                        <span className="text-dark text-[16px] font-[400]">Сейчас</span>
+                    <div className="flex flex-row items-center gap-x-2" onClick={(e: any) => {
+                        e.stopPropagation()
+                        e.preventDefault();
+                        toggle()
+                        handleNowCheck()
+                    }}>
+                        <Checkbox storeKey="time" />
+                        <span className="text-dark text-[16px] font-[400] cursor-pointer">Сейчас</span>
                     </div>
-                    {isVisible &&
+                    {!isVisible &&
                         <div className="flex flex-row ml-auto gap-x-2 w-[60%]">
                             <div className="w-[55%]">
                                 <Input

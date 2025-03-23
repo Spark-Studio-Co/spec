@@ -53,7 +53,7 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
             <div className="flex flex-row items-center mt-2 gap-x-1">
                 <NavigationIcon />
                 <a
-                    href={`https://2gis.ru/search/${encodeURIComponent(address)}`}
+                    href={`https://2gis.kz/search/${encodeURIComponent(address)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[16px] text-[#007AFF] font-[400] underline"
