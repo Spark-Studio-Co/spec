@@ -12,7 +12,7 @@ import { useTakeApplication } from '../entities/application/api/use-take-applica
 
 export const AdminApplicationScreen = () => {
     const { mutate } = useTakeApplication()
-    const { data: applications } = useGetApplications()
+    const { data: applications, refetch } = useGetApplications()
     const [cityId, setCityId] = useState<number>(0)
     const { data: performers } = useGetPerformers('', cityId)
     const { selected, setSelectedName } = useSelectorStore('performerSelector')
@@ -29,6 +29,7 @@ export const AdminApplicationScreen = () => {
                 console.log("Taken by performer")
                 setSelectedName('');
                 performerSelector.close();
+                refetch();
             },
             onError: (error) => {
                 console.error("Error taking application:", error)

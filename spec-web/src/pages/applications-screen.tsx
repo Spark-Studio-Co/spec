@@ -6,7 +6,7 @@ import { usePopupStore } from "../shared/model/popup-store";
 import { useTakenApplicationStore } from "../features/application-card/model/taken-application-store";
 import { useGetApplications } from "../entities/application/api/use-get-applications";
 import { useChangeStatus } from "../entities/application/api/use-change-status";
-// import { useGetApplicationText } from "../entities/application/api/use-get-application-text";
+import { useGetNoApplicationText } from "../entities/application/api/use-get-no-application-text";
 
 import { useNavigate } from "react-router";
 
@@ -21,7 +21,8 @@ export const ApplicationScreen = () => {
     const { mutate } = useChangeStatus()
 
     const { data: applications, isLoading, error, refetch } = useGetApplications();
-    const { data: archive } = useGetArchive()
+    const { data: archive, isLoading: isArchiveLoading } = useGetArchive()
+    const { data: noApplicationText, isLoading: isTextLoading } = useGetNoApplicationText()
 
     const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore("phone-popup");
     const { isOpen: isOpenTaken, open: openTakenPopup } = usePopupStore("taken-popup");
@@ -33,13 +34,16 @@ export const ApplicationScreen = () => {
     const { setTaken, taken, } = useTakenApplicationStore();
     const [currentCard, setCurrentCard] = useState<number | null>(null);
 
-    if (isLoading) return <p className="text-center">Загрузка заявок...</p>;
+    if (isLoading || isArchiveLoading) return <p className="text-center">Загрузка заявок...</p>;
     if (error) return <p className="text-red-500 text-center">Ошибка: {error.message}</p>;
+
+    if (!applications) return <p className="text-center">Нет доступных заявок</p>;
+    if (!archive) return <p className="text-center">Загрузка архива...</p>;
 
     const handleTakeApplication = (index: number, phone: string) => {
         if (taken.includes(index)) return;
 
-        const unpaidApplications = archive.filter((app: any) => app.balance_history?.length === 0);
+        const unpaidApplications = archive?.filter((app: any) => app.balance_history?.length === 0) || [];
 
         if (unpaidApplications.length >= 2) {
             openTakenPopup();
@@ -103,7 +107,10 @@ export const ApplicationScreen = () => {
     if (applications.length === 0) {
         return (
             <div className="w-full px-3 py-4 flex flex-col bg-white rounded-[12px]">
-                <span className="text-[#171717] font-[500] text-[20px] leading-tight">Данная форма предназначена для показа заявок на исполнение бытовых услуг</span>
+                <span className="text-[#171717] font-[500] text-[20px] leading-tight">{
+                    isTextLoading ? "Загрузка..." :
+                        (noApplicationText ? noApplicationText?.text : "Нет доступных заявок")
+                }</span>
                 <span className="text-[#171717] font-[400] text-[16px] mt-2">Для регистрации в качестве исполнителя свяжитесь с администрацией
                     по WhatsApp <a href="tel:+77777777777" className="text-[16px] underline text-[#007AFF]">+77777777777</a></span>
             </div>
@@ -111,7 +118,7 @@ export const ApplicationScreen = () => {
     }
 
     let notPaid = archive
-        .filter((app: any) => app.balance_history?.length === 0)
+        ?.filter((app: any) => app.balance_history?.length === 0)
         .map((app: any) => app.address)
         .join(', ') || null
 
@@ -144,7 +151,7 @@ export const ApplicationScreen = () => {
                                     } else if (taken.length >= 1) {
                                         openTakenPopup();
                                     } else if (application.status_id === 1) {
-                                        const unpaidApplications = archive.filter((app: any) => app.balance_history?.length === 0);
+                                        const unpaidApplications = archive?.filter((app: any) => app.balance_history?.length === 0) || [];
                                         if (unpaidApplications.length >= 2) {
                                             openTakenPopup();
                                         } else {

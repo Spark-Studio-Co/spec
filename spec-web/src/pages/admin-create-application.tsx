@@ -206,8 +206,10 @@ export const AdminCreateApplication = () => {
     }
 
     const handleSetEmergency = (e: any) => {
-        e.stopPropagation();
-        e.preventDefault();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
         emergencyStore.setChecked();
         store.setEmergency()
         console.log(store.emergency)
@@ -258,22 +260,34 @@ export const AdminCreateApplication = () => {
                         className="mt-2"
                     />
                 </div>
-                <div className="flex flex-row items-center mt-5 gap-x-2" onClick={(e: any) => {
-                    handleSetEmergency(e)
-                }}>
-                    <Checkbox storeKey="emergency" />
-                    <span className="text-dark text-[16px] font-[400]">🔥 Аварийный вызов</span>
+                <div className="flex flex-row items-center mt-5 gap-x-2 cursor-pointer">
+                    <Checkbox 
+                        storeKey="emergency" 
+                        onClick={() => handleSetEmergency(null)} 
+                    />
+                    <span 
+                        className="text-dark text-[16px] font-[400]"
+                        onClick={() => handleSetEmergency(null)}
+                    >🔥 Аварийный вызов</span>
                 </div>
                 <span className="mt-4 block text-[#171717] font-[500] text-[18px]">Время</span>
                 <div className="mt-3 flex flex-row items-center w-full">
-                    <div className="flex flex-row items-center gap-x-2" onClick={(e: any) => {
-                        e.stopPropagation()
-                        e.preventDefault();
-                        toggle()
-                        handleNowCheck()
-                    }}>
-                        <Checkbox storeKey="time" />
-                        <span className="text-dark text-[16px] font-[400] cursor-pointer">Сейчас</span>
+                    <div className="flex flex-row items-center gap-x-2 cursor-pointer">
+                        <Checkbox 
+                            storeKey="time" 
+                            defaultChecked={true}
+                            onClick={() => {
+                                toggle()
+                                handleNowCheck()
+                            }} 
+                        />
+                        <span 
+                            className="text-dark text-[16px] font-[400] cursor-pointer"
+                            onClick={() => {
+                                toggle()
+                                handleNowCheck()
+                            }}
+                        >Сейчас</span>
                     </div>
                     {!isVisible &&
                         <div className="flex flex-row ml-auto gap-x-2 w-[60%]">
