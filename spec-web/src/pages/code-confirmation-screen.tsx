@@ -117,7 +117,7 @@ export const CodeConfirmationScreen = () => {
             </button>
             <div className="flex flex-col">
                 <span className="text-dark font-semibold text-[24px] leading-[28px]">
-                    Мы отправили SMS на номер
+                    Мы отправили код на телефон
                 </span>
                 <span className="text-[20px] text-dark font-normal leading-[28px] mt-3">
                     <FormattedPhone phone={phone} />

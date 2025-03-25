@@ -29,13 +29,19 @@ export const useVerifySmsStore = create<IVerifySmsStore>((set) => ({
         mutate(
             { code, phone, request_id, user_agent },
             {
-                onSuccess: (data: any) => {
+                onSuccess: (response: any) => {
+                    const data = response?.data || response;
                     if (data?.token && data?.user?.id) {
                         console.log("✅ Token received:", data.token);
                         saveToken(data.token);
                         saveUserId(data.user.id)
                         navigate()
-                    } else {
+                    } else if (data?.token) {
+                        console.log("✅ Token received:", data.token);
+                        saveToken(data.token);
+                        navigate()
+                    }
+                    else {
                         console.warn("⚠️ No token received in response!");
                         set({ error: "Неверный код подтверждения", isLoading: false });
                     }

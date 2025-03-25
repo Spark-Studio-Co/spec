@@ -71,7 +71,7 @@ export const RegistrationScreen = () => {
                     <br /> для входа
                 </span>
                 <span className="text-[20px] text-dark font-normal leading-[28px] mt-3">
-                    Мы пришлем SMS для входа
+                    Мы пришлем код на телефон для входа
                 </span>
                 <Input
                     type="tel"
@@ -84,7 +84,7 @@ export const RegistrationScreen = () => {
             <span className="text-red-500 text-sm mt-2 w-full items-center justify-center flex">{error?.message}</span>
             <Button
                 variant={disabled ? 'disabled' : 'default'}
-                label={isLoading ? 'Отправка...' : 'Отправить SMS'}
+                label={isLoading ? 'Отправка...' : 'Отправить код'}
                 className="mt-auto"
                 type="submit"
                 disabled={disabled}
