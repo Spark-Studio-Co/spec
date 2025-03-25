@@ -13,10 +13,14 @@
       "bundleIdentifier": "com.senseigai.specapp"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.jpg",
         "backgroundColor": "#ffffff"
       },
+      "plugins": [
+        "expo-notifications"
+      ],
       "package": "kz.spec"
     },
     "web": {
@@ -45,6 +49,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "fd551063-f3e0-434a-9557-a19507487354"
+      }
     }
   }
 }
