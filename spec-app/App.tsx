@@ -1,7 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import uuid from 'react-native-uuid';
 import notifee from '@notifee/react-native';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Alert, Platform } from 'react-native';
 import WebViewScreen from './app/index';
 import axios from 'axios';
@@ -48,6 +48,9 @@ async function displayNotification(remoteMessage: any) {
 }
 
 export default function App() {
+    // Use a ref to track if token has been sent in this session
+    const tokenSentRef = useRef(false);
+    
     useEffect(() => {
         const getToken = async () => {
             try {
@@ -61,9 +64,27 @@ export default function App() {
                     return;
                 }
 
-                const fcmToken = await messaging().getToken();
-                console.log('📲 FCM Token:', fcmToken);
-                await createFcm({ temporaryKey: uuid.v4(), fcmToken });
+                // Only send token if it hasn't been sent in this session
+                if (!tokenSentRef.current) {
+                    const fcmToken = await messaging().getToken();
+                    console.log('📲 FCM Token:', fcmToken);
+                    
+                    // Send the token
+                    await createFcm({ temporaryKey: uuid.v4(), fcmToken });
+                    
+                    // Mark as sent for this session
+                    tokenSentRef.current = true;
+                    console.log('✅ FCM Token sent to server');
+                } else {
+                    console.log('ℹ️ FCM Token already sent in this session');
+                }
+                
+                // Set up token refresh listener - only triggers when token actually changes
+                // This ensures we only send when needed in the future
+                messaging().onTokenRefresh(async newToken => {
+                    console.log('🔄 FCM Token refreshed:', newToken);
+                    await createFcm({ temporaryKey: uuid.v4(), fcmToken: newToken });
+                });
             } catch (error) {
                 console.error('❌ Ошибка при получении FCM токена:', error);
             }
