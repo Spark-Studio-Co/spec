@@ -1,20 +1,35 @@
 import messaging from '@react-native-firebase/messaging';
+import uuid from 'react-native-uuid';
 import notifee from '@notifee/react-native';
 import { useEffect } from 'react';
 import { Alert, Platform } from 'react-native';
 import WebViewScreen from './app/index';
+import axios from 'axios';
 
-// ✅ Фоновое уведомление (обязательно вне компонента!)
+interface CreateFcmDto {
+    temporaryKey: string;
+    fcmToken: string;
+}
+
+const createFcm = async (dto: CreateFcmDto) => {
+    try {
+        const { temporaryKey, fcmToken } = dto;
+        const response = await axios.post('https://spec-backend-production.up.railway.app/api/fcm', { temporaryKey, fcmToken });
+        return response.data;
+    } catch (error) {
+        console.error('❌ Ошибка при создании FCM:', error);
+        throw error;
+    }
+};
+
 messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('📥 [Background] Уведомление получено:', remoteMessage);
     await displayNotification(remoteMessage);
 });
 
-// ✅ Отображение уведомления вручную
 async function displayNotification(remoteMessage: any) {
     await notifee.requestPermission();
 
-    // Создаем канал (только 1 раз)
     await notifee.createChannel({
         id: 'default',
         name: 'Default Channel',
@@ -48,6 +63,7 @@ export default function App() {
 
                 const fcmToken = await messaging().getToken();
                 console.log('📲 FCM Token:', fcmToken);
+                await createFcm({ temporaryKey: uuid.v4(), fcmToken });
             } catch (error) {
                 console.error('❌ Ошибка при получении FCM токена:', error);
             }
@@ -57,7 +73,6 @@ export default function App() {
             getToken();
         }
 
-        // ✅ Активное приложение — показать пуш
         const unsubscribe = messaging().onMessage(async remoteMessage => {
             console.log('🟢 [Foreground] Уведомление получено:', remoteMessage);
             await displayNotification(remoteMessage);
