@@ -3,11 +3,14 @@ import { useEffect } from 'react';
 import { Alert, Platform } from 'react-native';
 import WebViewScreen from './app/index';
 
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('📥 [Background] Уведомление получено:', remoteMessage);
+});
+
 export default function App() {
     useEffect(() => {
         const getToken = async () => {
             try {
-                // 🔐 Запрашиваем разрешение на уведомления
                 const authStatus = await messaging().requestPermission();
                 const enabled =
                     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -18,20 +21,22 @@ export default function App() {
                     return;
                 }
 
-                // ✅ Получаем FCM токен
                 const fcmToken = await messaging().getToken();
                 console.log('📲 FCM Token:', fcmToken);
-
-                // 📦 Тут можешь отправить токен на сервер или в БД
             } catch (error) {
                 console.error('❌ Ошибка при получении FCM токена:', error);
             }
         };
 
-        // Только на физических устройствах
         if (Platform.OS === 'android' || Platform.OS === 'ios') {
             getToken();
         }
+
+        const unsubscribe = messaging().onMessage(async remoteMessage => {
+            console.log('🟢 [Foreground] Уведомление получено:', remoteMessage);
+        });
+
+        return unsubscribe;
     }, []);
 
     return <WebViewScreen />;
