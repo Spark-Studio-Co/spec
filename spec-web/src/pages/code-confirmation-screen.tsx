@@ -10,6 +10,7 @@ import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 import { useSendCode } from "../entities/auth-user/api/use-verify-sms";
 
 import BackArrowIcon from "../shared/assets/icons/back-arrow-icon";
+
 import { FormattedPhone } from "../shared/ui/formatted-phone/formatted-phone";
 
 export const CodeConfirmationScreen = () => {
@@ -101,7 +102,9 @@ export const CodeConfirmationScreen = () => {
         setSmsAttempts(prev => prev + 1);
         setLastSmsTime(Date.now());
 
-        submit(e, mutate, formattedValue, phone, requestId!, userAgent, saveToken, saveUserId, () => {
+        const temoporaryKey = "1";
+
+        submit(e, mutate, formattedValue, phone, requestId!, userAgent, temoporaryKey, saveToken, saveUserId, () => {
             setTimeout(() => removeRequestId(), 1500);
         });
     };
