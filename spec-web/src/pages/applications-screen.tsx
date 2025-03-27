@@ -40,6 +40,8 @@ export const ApplicationScreen = () => {
 
     const temporaryKey = localStorage.getItem("temporaryKey");
 
+    console.log("Temporary Key:", temporaryKey);
+
     useEffect(() => {
         if (temporaryKey && userId) {
             linkFCM({
