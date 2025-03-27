@@ -49,32 +49,34 @@ export default function WebViewScreen() {
         getTemporaryKey();
     }, []);
 
-    // This script runs when the WebView first loads
-    const injectedJavaScript = temporaryKey ? `
-        (function() {
-            try {
-                localStorage.setItem('temporaryKey', '${temporaryKey}');
-                console.log('temporaryKey set in web localStorage:', '${temporaryKey}');
-                // Send confirmation back to React Native
-                window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'KEY_SET',
-                    success: true,
-                    key: '${temporaryKey}'
-                }));
-            } catch (e) {
-                console.error('Error setting temporaryKey in localStorage:', e);
-                window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'KEY_SET',
-                    success: false,
-                    error: e.message
-                }));
-            }
-        })();
-        true;
-    ` : '';
+    const escapeForJS = (value: string) =>
+        value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+    const safeKey: string = escapeForJS(temporaryKey || '');
+
+    const injectedJavaScript = `
+  (function() {
+    try {
+      localStorage.setItem('temporaryKey', '${safeKey}');
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'KEY_SET',
+        success: true,
+        key: '${safeKey}'
+      }));
+    } catch (e) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'KEY_SET',
+        success: false,
+        error: e.message
+      }));
+    }
+  })();
+  true;
+`;
 
     // Handle messages from WebView
     const handleMessage = (event: any) => {
+        console.log('📩 WebView says:', event.nativeEvent.data);
         try {
             const data = JSON.parse(event.nativeEvent.data);
             console.log('📩 Message from WebView:', data);
@@ -90,7 +92,6 @@ export default function WebViewScreen() {
         }
     };
 
-    // Function to verify key is set and retry if needed
     const verifyKeyIsSet = () => {
         if (!keySetConfirmed && temporaryKey && webViewRef.current) {
             console.log('🔄 Verifying temporaryKey is set in localStorage...');
@@ -103,11 +104,11 @@ export default function WebViewScreen() {
                         storedKey: storedKey
                     }));
                     if (!storedKey) {
-                        localStorage.setItem('temporaryKey', '${temporaryKey}');
+                        localStorage.setItem('temporaryKey', '${safeKey}');
                         window.ReactNativeWebView.postMessage(JSON.stringify({
                             type: 'KEY_SET',
                             success: true,
-                            key: '${temporaryKey}'
+                            key: '${safeKey}'
                         }));
                     }
                 })();
@@ -118,12 +119,8 @@ export default function WebViewScreen() {
 
     return (
         <View style={styles.container}>
-            {isLoading ? (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#0000ff" />
-                    <Text style={styles.loadingText}>Загрузка...</Text>
-                </View>
-            ) : (
+            {
+                !isLoading && temporaryKey &&
                 <WebView
                     ref={webViewRef}
                     source={{ uri: 'https://kazonline.kz' }}
@@ -137,8 +134,7 @@ export default function WebViewScreen() {
                     onLoadEnd={() => {
                         setTimeout(verifyKeyIsSet, 1000);
                     }}
-                />
-            )}
+                />}
         </View>
     );
 }
