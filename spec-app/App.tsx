@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import { Alert, Platform } from 'react-native';
 import WebViewScreen from './app/index';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CreateFcmDto {
     temporaryKey: string;
@@ -53,7 +54,6 @@ async function displayNotification(remoteMessage: any) {
 }
 
 export default function App() {
-    // Use a ref to track if token has been sent in this session
     const tokenSentRef = useRef(false);
 
     useEffect(() => {
@@ -73,7 +73,11 @@ export default function App() {
                     const fcmToken = await messaging().getToken();
                     console.log('📲 FCM Token:', fcmToken);
 
-                    await createFcm({ temporaryKey: uuid.v4(), fcmToken });
+                    const temporaryKey = uuid.v4();
+
+                    await createFcm({ temporaryKey, fcmToken });
+
+                    await AsyncStorage.setItem("temporaryKey", temporaryKey);
 
                     tokenSentRef.current = true;
                     console.log('✅ FCM Token sent to server');

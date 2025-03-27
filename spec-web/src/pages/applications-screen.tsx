@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApplicationCard } from "../features/application-card/ui/application-card";
 import { Popup } from "../widgets/popup/popup";
 
@@ -12,13 +12,17 @@ import { useNavigate } from "react-router";
 
 import { IChangeStatusRDO } from "../entities/application/api/rdo/change-status.rdo";
 import { useGetArchive } from "../entities/archive/api/use-get-archive";
+import { useLinkFCM } from "../entities/link-fcm/api/use-link-fcm";
+import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 
 export const ApplicationScreen = () => {
     const navigate = useNavigate()
     const [refundReason, setRefundReason] = useState<string>("")
     const [denyReason, setDenyReason] = useState<string>("")
+    const { userId } = useAuthData()
 
     const { mutate } = useChangeStatus()
+    const { mutate: linkFCM } = useLinkFCM()
 
     const { data: applications, isLoading, error, refetch } = useGetApplications();
     const { data: archive, isLoading: isArchiveLoading } = useGetArchive()
@@ -33,6 +37,24 @@ export const ApplicationScreen = () => {
 
     const { setTaken, taken, } = useTakenApplicationStore();
     const [currentCard, setCurrentCard] = useState<number | null>(null);
+
+    const temporaryKey = localStorage.getItem("temporaryKey");
+
+    useEffect(() => {
+        if (temporaryKey && userId) {
+            linkFCM({
+                temporaryKey: temporaryKey,
+                id: userId
+            }, {
+                onSuccess: (data: any) => {
+                    console.log("FCM Linked", data)
+                },
+                onError: (error: any) => {
+                    console.log(error)
+                }
+            });
+        }
+    }, [temporaryKey, userId, linkFCM]);
 
     if (isLoading || isArchiveLoading) return <p className="text-center">Загрузка заявок...</p>;
     if (error) return <p className="text-red-500 text-center">Ошибка: {error.message}</p>;

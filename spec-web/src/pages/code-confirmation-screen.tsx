@@ -102,9 +102,9 @@ export const CodeConfirmationScreen = () => {
         setSmsAttempts(prev => prev + 1);
         setLastSmsTime(Date.now());
 
-        const temoporaryKey = "1";
 
-        submit(e, mutate, formattedValue, phone, requestId!, userAgent, temoporaryKey, saveToken, saveUserId, () => {
+
+        submit(e, mutate, formattedValue, phone, requestId!, userAgent, saveToken, saveUserId, () => {
             setTimeout(() => removeRequestId(), 1500);
         });
     };
