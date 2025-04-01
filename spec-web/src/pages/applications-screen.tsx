@@ -14,13 +14,14 @@ import { IChangeStatusRDO } from "../entities/application/api/rdo/change-status.
 import { useGetArchive } from "../entities/archive/api/use-get-archive";
 import { useLinkFCM } from "../entities/link-fcm/api/use-link-fcm";
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const ApplicationScreen = () => {
     const navigate = useNavigate()
     const [refundReason, setRefundReason] = useState<string>("")
     const [denyReason, setDenyReason] = useState<string>("")
     const { userId } = useAuthData()
-
+    const queryClient = useQueryClient();
     const { mutate } = useChangeStatus()
     const { mutate: linkFCM } = useLinkFCM()
 
@@ -96,6 +97,9 @@ export const ApplicationScreen = () => {
                 onSuccess: () => {
                     console.log("Status successfully updated");
                     refetch();
+                    queryClient.invalidateQueries({
+                        queryKey: ['archive'],
+                    });
                 },
                 onError: (error) => console.error("Error:", error.message)
             }
@@ -175,7 +179,7 @@ export const ApplicationScreen = () => {
                                     } else if (taken.length >= 1) {
                                         openTakenPopup();
                                     } else if (application.status_id === 1) {
-                                        const unpaidApplications = archive?.filter((app: any) => app.balance_history?.length === 0) || [];
+                                        const unpaidApplications = archive?.filter((app: any) => (app.balance_history?.length === 0) && app.status_id !== 4 && app.status_id !== 5) || [];
                                         if (unpaidApplications.length >= 2) {
                                             openTakenPopup();
                                         } else {

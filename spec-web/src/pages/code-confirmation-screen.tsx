@@ -2,6 +2,7 @@ import { SingleValueInput } from "../shared/ui/single-value-input/single-value-i
 import { Button } from "../shared/ui/button/button";
 import { ChangeEvent, SyntheticEvent, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import * as UAParserLib from 'ua-parser-js';
 
 import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 import { useVerifySmsStore } from "../entities/auth-user/model/verify-sms-store";
@@ -13,11 +14,16 @@ import BackArrowIcon from "../shared/assets/icons/back-arrow-icon";
 
 import { FormattedPhone } from "../shared/ui/formatted-phone/formatted-phone";
 
+
 export const CodeConfirmationScreen = () => {
-    const [userAgent, setUserAgent] = useState("");
+    const [userAgent, setUserAgent] = useState<string | undefined>("");
+
+    const parser = new UAParserLib.UAParser();
+    const result = parser.getResult();
+    const deviceModel = result.device.model || result.browser.name;
 
     useEffect(() => {
-        setUserAgent(navigator.userAgent);
+        setUserAgent(`SpecApp 0.0.1 ${deviceModel}`);
     }, []);
 
     const handleBack = (e: React.MouseEvent) => {

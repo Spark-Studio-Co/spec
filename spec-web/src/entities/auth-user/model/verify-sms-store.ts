@@ -11,7 +11,7 @@ interface IVerifySmsStore {
         code: string,
         phone: string,
         request_id: string,
-        user_agent: string,
+        user_agent: string | undefined,
         saveToken: (token: string) => void,
         saveUserId: (userId: number) => void,
         navigate: () => void,
