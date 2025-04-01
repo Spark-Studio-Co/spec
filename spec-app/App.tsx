@@ -1,11 +1,13 @@
 
-import { Vibration } from 'react-native';
+import { ActivityIndicator, Vibration, View } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import uuid from 'react-native-uuid';
 import notifee from '@notifee/react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Platform } from 'react-native';
 import WebViewScreen from './app/index';
+import { Text } from 'react-native';
+
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -55,6 +57,7 @@ async function displayNotification(remoteMessage: any) {
 
 export default function App() {
     const tokenSentRef = useRef(false);
+    const [isReady, setIsReady] = useState(false); // 👈
 
     useEffect(() => {
         const getToken = async () => {
@@ -66,6 +69,7 @@ export default function App() {
 
                 if (!enabled) {
                     Alert.alert('❌ Разрешение на уведомления не получено');
+                    setIsReady(true);
                     return;
                 }
 
@@ -73,7 +77,7 @@ export default function App() {
                     const fcmToken = await messaging().getToken();
                     console.log('📲 FCM Token:', fcmToken);
 
-                    const temporaryKey = uuid.v4();
+                    const temporaryKey = uuid.v4().toString();
 
                     await createFcm({ temporaryKey, fcmToken });
 
@@ -81,21 +85,19 @@ export default function App() {
 
                     tokenSentRef.current = true;
                     console.log('✅ FCM Token sent to server');
-                } else {
-                    console.log('ℹ️ FCM Token already sent in this session');
                 }
 
-                messaging().onTokenRefresh(async newToken => {
-                    console.log('🔄 FCM Token refreshed:', newToken);
-                    await createFcm({ temporaryKey: uuid.v4(), fcmToken: newToken });
-                });
+                setIsReady(true); // ✅ Ready to render WebView now
             } catch (error) {
                 console.error('❌ Ошибка при получении FCM токена:', error);
+                setIsReady(true); // still allow rendering on error
             }
         };
 
         if (Platform.OS === 'android') {
             getToken();
+        } else {
+            setIsReady(true); // Skip FCM on iOS for now
         }
 
         const unsubscribe = messaging().onMessage(async remoteMessage => {
@@ -105,6 +107,15 @@ export default function App() {
 
         return unsubscribe;
     }, []);
+
+    if (!isReady) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#5992FF" />
+                <Text style={{ marginTop: 10, fontSize: 16 }}>Загрузка...</Text>
+            </View>
+        );
+    }
 
     return <WebViewScreen />;
 }
