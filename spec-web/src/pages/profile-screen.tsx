@@ -5,11 +5,16 @@ import { Button } from "../shared/ui/button/button";
 import { FormattedPhone } from "../shared/ui/formatted-phone/formatted-phone";
 
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
-
 import { useGetCategories } from "../entities/categories/api/use-get-categories";
+import { useUserData } from "../entities/user/api/use-user-data";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetCityById } from "../shared/hooks/useGetCityById";
+import { useEffect } from "react";
 
 export const ProfileScreen = () => {
+    const queryClient = useQueryClient()
     const { data: categories } = useGetCategories()
+    const { data: userData, refetch } = useUserData()
     const { logout } = useAuthData();
 
     const handleLogout = () => {
@@ -18,20 +23,28 @@ export const ProfileScreen = () => {
 
     const rawPhone = localStorage.getItem('phone')
 
+    useEffect(() => {
+        queryClient.invalidateQueries({
+            queryKey: ['userData']
+        })
+        refetch()
+    }, [userData])
+
+
     return (
         <div className="flex flex-col">
             <ProfileHeader
-                name="Gaidar Timirbaev"
+                name={userData?.fullname || ""}
                 phone={<FormattedPhone phone={rawPhone} />}
-                city="Tashkent"
+                city={useGetCityById(userData?.city_id).name}
             />
             <CategoriesList categories={categories} />
             <StatisticsCard
                 date="01.01.2025"
-                applications={1000}
-                totalEarned={300000}
-                commission={88000}
-                earned={212000}
+                applications={0}
+                totalEarned={0}
+                commission={0}
+                earned={0}
                 onDateChange={(date) => {
                     if (date) {
                         const formattedDate = date.toLocaleDateString('ru-RU', {

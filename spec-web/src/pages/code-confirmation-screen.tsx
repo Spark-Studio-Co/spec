@@ -24,7 +24,7 @@ export const CodeConfirmationScreen = () => {
 
     useEffect(() => {
         setUserAgent(`SpecApp 0.0.1 ${deviceModel}`);
-    }, []);
+    }, [deviceModel]);
 
     const handleBack = (e: React.MouseEvent) => {
         e.preventDefault();

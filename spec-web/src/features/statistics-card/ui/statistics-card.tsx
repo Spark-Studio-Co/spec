@@ -9,10 +9,11 @@ interface IStatisticsCardProps {
     totalEarned: number
     commission: number
     earned: number
+    isNull?: boolean
     onDateChange?: (date: Date | null) => void
 }
 
-export const StatisticsCard = ({ date, applications, totalEarned, commission, earned, onDateChange }: IStatisticsCardProps) => {
+export const StatisticsCard = ({ date, applications, totalEarned, commission, earned, isNull, onDateChange }: IStatisticsCardProps) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
         if (date.match(/^\d{2}\.\d{2}\.\d{4}$/)) {
             const [day, month, year] = date.split('.')
@@ -84,7 +85,7 @@ export const StatisticsCard = ({ date, applications, totalEarned, commission, ea
                     )}
                 </div>
             </div>
-            <div className='w-full bg-white rounded-[12px] p-3 mt-2'>
+            {isNull ? null : <div className='w-full bg-white rounded-[12px] p-3 mt-2'>
                 <div className="flex flex-col gap-y-1.5">
                     <div className="flex flex-row justify-between items-center">
                         <span className="text-[14px] text-[#404040] font-[400]">Заявок</span>
@@ -103,7 +104,7 @@ export const StatisticsCard = ({ date, applications, totalEarned, commission, ea
                         <span className="text-[16px] text-[#171717] font-[500]">{earned.toLocaleString()} ₸</span>
                     </div>
                 </div>
-            </div>
+            </div>}
         </>
     )
 }
