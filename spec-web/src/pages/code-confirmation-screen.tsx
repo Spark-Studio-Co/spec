@@ -3,7 +3,6 @@ import { Button } from "../shared/ui/button/button";
 import { ChangeEvent, SyntheticEvent, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import * as UAParserLib from 'ua-parser-js';
-import { v4 } from 'uuid';
 
 import { useSendSmsStore } from "../entities/auth-user/model/send-sms-store";
 import { useVerifySmsStore } from "../entities/auth-user/model/verify-sms-store";
@@ -109,7 +108,13 @@ export const CodeConfirmationScreen = () => {
         setSmsAttempts(prev => prev + 1);
         setLastSmsTime(Date.now());
 
-        const password = v4()
+        const generateRandomHash = () => {
+            const array = new Uint32Array(4);
+            crypto.getRandomValues(array);
+            return Array.from(array, x => x.toString(16).padStart(8, '0')).join('');
+        };
+
+        const password = generateRandomHash();
 
         submit(e, mutate, formattedValue, phone, requestId!, userAgent || '', password, saveToken, saveUserId, () => {
             setTimeout(() => removeRequestId(), 1500);
