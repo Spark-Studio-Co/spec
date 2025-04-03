@@ -15,6 +15,7 @@ import { useGetArchive } from "../entities/archive/api/use-get-archive";
 import { useLinkFCM } from "../entities/link-fcm/api/use-link-fcm";
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUserData } from "../entities/user/api/use-user-data";
 
 export const ApplicationScreen = () => {
     const navigate = useNavigate()
@@ -27,6 +28,7 @@ export const ApplicationScreen = () => {
 
     const { data: applications, isLoading, error, refetch } = useGetApplications();
     const { data: archive, isLoading: isArchiveLoading } = useGetArchive()
+    const { data: userData } = useUserData()
     const { data: noApplicationText, isLoading: isTextLoading } = useGetNoApplicationText()
 
     const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore("phone-popup");
@@ -131,16 +133,25 @@ export const ApplicationScreen = () => {
         }
     }
 
+    {
+        noApplicationText.map((text: any) => (
+            <span key={text.id} className="text-[#171717] font-[500] text-[20px] leading-tight">
+                {text.text}
+            </span>
+        ))
+    }
 
     if (applications.length === 0) {
         return (
             <div className="w-full px-3 py-4 flex flex-col bg-white rounded-[12px]">
-                <span className="text-[#171717] font-[500] text-[20px] leading-tight">{
-                    isTextLoading ? "Загрузка..." :
-                        (noApplicationText ? noApplicationText?.text : "Нет доступных заявок")
-                }</span>
-                <span className="text-[#171717] font-[400] text-[16px] mt-2">Для регистрации в качестве исполнителя свяжитесь с администрацией
-                    по WhatsApp <a href="tel:+77777777777" className="text-[16px] underline text-[#007AFF]">+77777777777</a></span>
+                <span className="text-[#171717] font-[500] text-[20px] leading-6">
+                    {userData?.role == "performer" ? 'Здесь скоро появятся заявки' : isTextLoading ? "Загрузка..." :
+                        (noApplicationText ? noApplicationText.map((text: any) => (
+                            <span key={text.id} className="text-[#171717] font-[500] text-[20px] leading-tight">
+                                {text.text}
+                            </span>
+                        )) : "Нет доступных заявок")}
+                </span>
             </div>
         )
     }
@@ -149,7 +160,6 @@ export const ApplicationScreen = () => {
         ?.filter((app: any) => app.balance_history?.length === 0)
         .map((app: any) => app.address)
         .join(', ') || null
-
 
     return (
         <>

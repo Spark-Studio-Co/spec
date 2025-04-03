@@ -6,29 +6,45 @@ import { Button } from "../shared/ui/button/button";
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 
 import { useGetCategories } from "../entities/categories/api/use-get-categories";
-import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { useUserData } from "../entities/user/api/use-user-data";
+import { useQueryClient } from "@tanstack/react-query";
+import { FormattedPhone } from "../shared/ui/formatted-phone/formatted-phone";
+import { useGetCityById } from "../shared/hooks/useGetCityById";
 
 export const AdminProfileScreen = () => {
-    const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const { data: categories } = useGetCategories()
-    const { removeToken, removeRole } = useAuthData()
+    const { data: userData, refetch } = useUserData()
+    const { logout } = useAuthData();
 
     const handleLogout = () => {
-        removeRole()
-        removeToken();
-        navigate('/')
+        logout()
     };
+
+    const rawPhone = localStorage.getItem('phone')
+
+    useEffect(() => {
+        queryClient.invalidateQueries({
+            queryKey: ['userData']
+        })
+        refetch()
+    }, [userData])
 
     return (
         <div className="flex flex-col">
-            <ProfileHeader name="Gaidar Timirbaev" phone="+998 99 999 99 99" city="Tashkent" />
+            <ProfileHeader
+                name={userData?.fullname || ""}
+                phone={<FormattedPhone phone={rawPhone} />}
+                city={useGetCityById(userData?.city_id).name}
+            />
             <CategoriesList categories={categories} />
             <StatisticsCard
                 date="01.01.2025"
-                applications={1000}
-                totalEarned={300000}
-                commission={88000}
-                earned={212000}
+                applications={0}
+                totalEarned={0}
+                commission={0}
+                earned={0}
                 onDateChange={(date) => {
                     if (date) {
                         const formattedDate = date.toLocaleDateString('ru-RU', {
