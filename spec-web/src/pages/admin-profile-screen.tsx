@@ -18,6 +18,8 @@ export const AdminProfileScreen = () => {
     const { data: userData, refetch } = useUserData()
     const { logout } = useAuthData();
 
+    const currentDate = new Date().toISOString().split("T")[0];
+
     const handleLogout = () => {
         logout()
     };
@@ -40,7 +42,7 @@ export const AdminProfileScreen = () => {
             />
             <CategoriesList categories={categories} />
             <StatisticsCard
-                date="01.01.2025"
+                date={currentDate}
                 applications={0}
                 totalEarned={0}
                 commission={0}
