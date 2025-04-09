@@ -42,26 +42,42 @@ export const RegistrationScreen = () => {
 
     useEffect(() => {
         const storedPhone = localStorage.getItem("phone");
+        const savedAt = localStorage.getItem("phone_saved_at");
+
+        if (savedAt) {
+            const now = new Date();
+            const savedDate = new Date(savedAt);
+            const diffDays = Math.floor((now.getTime() - savedDate.getTime()) / (1000 * 60 * 60 * 24));
+
+            if (diffDays >= 7) {
+                console.log("🗑️ Phone expired, clearing from localStorage");
+                localStorage.removeItem("phone");
+                localStorage.removeItem("phone_saved_at");
+                return;
+            }
+        }
+
         console.log('Retrieved phone from localStorage for verification:', storedPhone);
 
         if (storedPhone) {
-            verifyPhone({ phone: storedPhone },
+            verifyPhone(
+                { phone: storedPhone },
                 {
                     onSuccess: (data: any) => {
                         if (data?.token) {
                             saveToken(data.token);
-                            navigate("/application")
+                            navigate("/application");
                         } else {
                             console.warn("⚠️ No token received in response!");
                         }
                     },
                     onError: () => {
-                        console.log('Verification error:', verifyPhoneError)
+                        console.log('Verification error:', verifyPhoneError);
                     }
                 },
             );
         }
-    }, [])
+    }, []);
 
     return (
         <form className="flex flex-col justify-between h-[90%]" onSubmit={handleSubmit}>

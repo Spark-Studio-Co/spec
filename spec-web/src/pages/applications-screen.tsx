@@ -146,7 +146,7 @@ export const ApplicationScreen = () => {
             <div className="w-full px-3 py-4 flex flex-col bg-white rounded-[12px]">
                 <span className="text-[#171717] font-[500] text-[20px] leading-6">
                     {userData?.role == "performer" ? 'Здесь скоро появятся заявки' : isTextLoading ? "Загрузка..." :
-                        (noApplicationText ? noApplicationText.map((text: any) => (
+                        (Array.isArray(noApplicationText) ? noApplicationText?.map((text: any) => (
                             <span key={text.id} className="text-[#171717] font-[500] text-[20px] leading-tight">
                                 {text.text}
                             </span>
