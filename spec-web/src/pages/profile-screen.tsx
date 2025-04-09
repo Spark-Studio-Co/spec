@@ -38,7 +38,7 @@ export const ProfileScreen = () => {
             <ProfileHeader
                 name={userData?.fullname || ""}
                 phone={<FormattedPhone phone={rawPhone} />}
-                city={useGetCityById(userData?.city_id).name}
+                city={useGetCityById(userData?.city_id).name || 'Не найден'}
             />
             <CategoriesList categories={categories} />
             <StatisticsCard
