@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AdminApplicationCard } from "../features/admin-application-card/ui/admin-application-card"
 import { Popup } from "../widgets/popup/popup";
 import { Selector } from '../shared/ui/selector/selector';
@@ -8,6 +8,8 @@ import { useSelectorStore } from "../shared/model/selector-store";
 import { useGetApplications } from '../entities/application/api/use-get-applications';
 import { useGetPerformers } from '../entities/performer/api/use-get-performers';
 import { useTakeApplication } from '../entities/application/api/use-take-application';
+import { useAdminCheck } from "../entities/admin-login/api/use-admin-check";
+import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 
 
 export const AdminApplicationScreen = () => {
@@ -18,6 +20,17 @@ export const AdminApplicationScreen = () => {
     const { selected, setSelectedName } = useSelectorStore('performerSelector')
     const performerSelector = usePopupStore('performerSelector')
     const [currentCard, setCurrentCard] = useState<number | null>(null)
+
+    const { logout, userId } = useAuthData();
+    const { data: adminCheck } = useAdminCheck(userId)
+
+    useEffect(() => {
+        if (adminCheck?.isAdmin === false) {
+            window.location.href = '/admin'
+            logout()
+        }
+        console.log(adminCheck)
+    }, [])
 
 
     const handlePerformerSelect = () => {

@@ -11,12 +11,24 @@ import { useUserData } from "../entities/user/api/use-user-data";
 import { useQueryClient } from "@tanstack/react-query";
 import { FormattedPhone } from "../shared/ui/formatted-phone/formatted-phone";
 import { useGetCityById } from "../shared/hooks/useGetCityById";
+import { useAdminCheck } from "../entities/admin-login/api/use-admin-check";
+
 
 export const AdminProfileScreen = () => {
     const queryClient = useQueryClient()
     const { data: categories } = useGetCategories()
     const { data: userData, refetch } = useUserData()
-    const { logout } = useAuthData();
+    const { logout, userId } = useAuthData();
+
+    const { data: adminCheck } = useAdminCheck(userId)
+
+    useEffect(() => {
+        if (adminCheck?.isAdmin === false) {
+            window.location.href = '/admin'
+            logout()
+        }
+        console.log(adminCheck)
+    }, [])
 
     const currentDate = new Date().toISOString().split("T")[0];
 

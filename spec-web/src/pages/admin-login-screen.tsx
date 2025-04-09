@@ -10,7 +10,7 @@ import { useAuthData } from '../entities/auth-user/api/use-auth-data';
 export const AdminLogin = () => {
     const { mutate, isPending, error } = useAdminLogin()
     const { username, password, setUsername, setPassword } = useAdminLoginStore()
-    const { saveToken, saveRole } = useAuthData();
+    const { saveToken, saveRole, saveUserId } = useAuthData();
     const navigate = useNavigate();
 
     const isDisabled = !username.trim() || !password.trim() || isPending;
@@ -22,7 +22,8 @@ export const AdminLogin = () => {
         mutate({ username, password },
             {
                 onSuccess: (data?: any) => {
-                    if (data?.token && data?.admin?.role) {
+                    if (data?.token && data?.admin?.role && data?.admin?.id) {
+                        saveUserId(data?.admin?.id)
                         saveToken(data?.token);
                         saveRole(data?.admin?.role);
                         console.log("Role:", data?.admin?.role)

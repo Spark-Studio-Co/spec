@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router";
-import { QueryClientProvider } from "@tanstack/react-query";
-import reactQueryClient from "./api/query-client";
+
 
 // Screens
 import { RegistrationScreen } from "../pages/registration-screen";
@@ -40,6 +39,7 @@ export const App = () => {
   const isAuthPage = ["/", "/admin", "/code-confirmation"].includes(location.pathname);
   const isProtectedPage = !isAuthPage;
 
+
   useEffect(() => {
     if (!token && isProtectedPage) {
       navigate("/", { replace: true });
@@ -55,34 +55,32 @@ export const App = () => {
   }
 
   return (
-    <QueryClientProvider client={reactQueryClient}>
-      <Routes>
-        {token ? (
-          isAdmin ? (
-            <>
-              <Route path="/admin/profile" element={<MainLayout isAdmin={isAdmin}><AdminProfileScreen /></MainLayout>} />
-              <Route path="/admin/create-application" element={<MainLayout isBottomPanel={false}><AdminCreateApplication /></MainLayout>} />
-              <Route path="/admin/archive" element={<MainLayout isAdmin={isAdmin}><AdminArchiveScreen /></MainLayout>} />
-              <Route path="/admin/application" element={<MainLayout isAdmin={isAdmin} isCreateApplication><AdminApplicationScreen /></MainLayout>} />
-              <Route path="*" element={<Navigate to="/admin/application" replace />} />
-            </>
-          ) : (
-            <>
-              <Route path="/application" element={<MainLayout><ApplicationScreen /></MainLayout>} />
-              <Route path="/archive" element={<MainLayout><ArchiveScreen /></MainLayout>} />
-              <Route path="/profile" element={<MainLayout><ProfileScreen /></MainLayout>} />
-              <Route path="*" element={<Navigate to="/application" replace />} />
-            </>
-          )
+    <Routes>
+      {token ? (
+        isAdmin ? (
+          <>
+            <Route path="/admin/profile" element={<MainLayout isAdmin={isAdmin}><AdminProfileScreen /></MainLayout>} />
+            <Route path="/admin/create-application" element={<MainLayout isBottomPanel={false}><AdminCreateApplication /></MainLayout>} />
+            <Route path="/admin/archive" element={<MainLayout isAdmin={isAdmin}><AdminArchiveScreen /></MainLayout>} />
+            <Route path="/admin/application" element={<MainLayout isAdmin={isAdmin} isCreateApplication><AdminApplicationScreen /></MainLayout>} />
+            <Route path="*" element={<Navigate to="/admin/application" replace />} />
+          </>
         ) : (
           <>
-            <Route path="/admin" element={<AuthLayout><AdminLogin /></AuthLayout>} />
-            <Route path="/" element={<AuthLayout><RegistrationScreen /></AuthLayout>} />
-            <Route path="/code-confirmation" element={<AuthLayout><CodeConfirmationScreen /></AuthLayout>} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/application" element={<MainLayout><ApplicationScreen /></MainLayout>} />
+            <Route path="/archive" element={<MainLayout><ArchiveScreen /></MainLayout>} />
+            <Route path="/profile" element={<MainLayout><ProfileScreen /></MainLayout>} />
+            <Route path="*" element={<Navigate to="/application" replace />} />
           </>
-        )}
-      </Routes>
-    </QueryClientProvider>
+        )
+      ) : (
+        <>
+          <Route path="/admin" element={<AuthLayout><AdminLogin /></AuthLayout>} />
+          <Route path="/" element={<AuthLayout><RegistrationScreen /></AuthLayout>} />
+          <Route path="/code-confirmation" element={<AuthLayout><CodeConfirmationScreen /></AuthLayout>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      )}
+    </Routes>
   );
 };

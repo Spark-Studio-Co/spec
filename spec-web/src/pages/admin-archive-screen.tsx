@@ -3,13 +3,28 @@ import { Checkbox } from "../shared/ui/checkbox/checkbox";
 
 import { useGetArchive } from "../entities/archive/api/use-get-archive";
 import { useCheckboxStore } from "../shared/model/checkbox-store";
+import { useAdminCheck } from "../entities/admin-login/api/use-admin-check";
+import { useAuthData } from '../entities/auth-user/api/use-auth-data';
+import { useEffect } from "react";
 
 export const AdminArchiveScreen = () => {
     const { data: archive, isLoading, error } = useGetArchive()
     const { checked } = useCheckboxStore('archive')
+    const { logout, userId } = useAuthData();
+
+    const { data: adminCheck } = useAdminCheck(userId)
+
+    useEffect(() => {
+        if (adminCheck?.isAdmin === false) {
+            window.location.href = '/admin'
+            logout()
+        }
+        console.log(adminCheck)
+    }, [])
 
     if (isLoading) return <p className="text-center">Загрузка заявок...</p>;
     if (error) return <p className="text-red-500 text-center">Ошибка: {error.message}</p>;
+
 
     return (
         <div className="flex flex-col gap-3">
