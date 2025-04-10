@@ -32,6 +32,7 @@ export const ProfileScreen = () => {
         refetch()
     }, [userData])
 
+    console.log("user data", userData)
 
     return (
         <div className="flex flex-col">

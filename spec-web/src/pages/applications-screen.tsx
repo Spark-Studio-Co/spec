@@ -134,7 +134,7 @@ export const ApplicationScreen = () => {
     }
 
     {
-        noApplicationText.map((text: any) => (
+        noApplicationText?.map((text: any) => (
             <span key={text.id} className="text-[#171717] font-[500] text-[20px] leading-tight">
                 {text.text}
             </span>

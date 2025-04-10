@@ -4,12 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "sentry": "sentry-wizard -i sourcemaps",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@sentry/react": "^9.12.0",
     "@tailwindcss/vite": "^4.0.7",
     "@tanstack/react-query": "^5.66.9",
     "axios": "^1.7.9",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@sentry/wizard": "^4.6.0",
     "@tanstack/router-devtools": "^1.112.0",
     "@tanstack/router-plugin": "^1.112.0",
     "@types/node": "^22.13.5",

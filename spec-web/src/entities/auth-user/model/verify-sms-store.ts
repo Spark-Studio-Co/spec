@@ -32,10 +32,11 @@ export const useVerifySmsStore = create<IVerifySmsStore>((set) => ({
             {
                 onSuccess: (response: any) => {
                     const data = response?.data || response;
-                    if (data?.token && data?.user?.id) {
+                    if (data?.token && data?.id) {
                         console.log("✅ Token received:", data.token);
                         saveToken(data.token);
-                        saveUserId(data.user.id)
+                        console.log("✅ Id received:", data.id);
+                        saveUserId(data.id)
                         navigate()
                     } else if (data?.token) {
                         console.log("✅ Token received:", data.token);
