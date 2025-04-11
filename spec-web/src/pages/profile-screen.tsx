@@ -21,6 +21,7 @@ export const ProfileScreen = () => {
 
     const handleLogout = () => {
         logout()
+        localStorage.removeItem("phone")
     };
 
     const rawPhone = localStorage.getItem('phone')
