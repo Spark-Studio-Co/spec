@@ -32,6 +32,9 @@ export const AdminApplicationScreen = () => {
         console.log(adminCheck)
     }, [])
 
+    useEffect(() => {
+        refetch()
+    }, [applications?.length])
 
     const handlePerformerSelect = () => {
         mutate({

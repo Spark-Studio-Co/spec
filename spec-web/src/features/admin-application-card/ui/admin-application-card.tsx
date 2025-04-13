@@ -8,7 +8,6 @@ import PhoneIcon from "../../../shared/assets/icons/phone-icon"
 
 interface IApplicationCard {
     id: number,
-    title: string,
     status_id: number
     description: string,
     price_min: string,
@@ -24,7 +23,7 @@ interface IApplicationCard {
     emergency_call: boolean
 }
 
-export const AdminApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, status_id, users_tasks_performer_user_idTousers, emergency_call }: IApplicationCard) => {
+export const AdminApplicationCard = ({ description, price_min, price_max, commission, phone, execute_at, address, onClick, status_id, users_tasks_performer_user_idTousers, emergency_call }: IApplicationCard) => {
     const isoDate = execute_at;
     const humanReadable = new Intl.DateTimeFormat("ru-RU", {
         year: "numeric",
@@ -40,7 +39,6 @@ export const AdminApplicationCard = ({ title, description, price_min, price_max,
         <div
             className="w-full min-h-[80px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer"
         >
-            <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
                 <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
@@ -89,6 +87,7 @@ export const AdminApplicationCard = ({ title, description, price_min, price_max,
                 height="h-[36px]"
                 className='mt-5'
                 onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     onClick?.();
                 }}

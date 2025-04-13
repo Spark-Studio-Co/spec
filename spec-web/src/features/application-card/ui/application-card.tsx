@@ -11,7 +11,6 @@ import { useState } from "react"
 interface IApplicationCard {
     id: number,
     status_id: 1 | 2 | 3 | 4 | 5 | 6,
-    title: string,
     description: string,
     price_min: string,
     price_max: string,
@@ -28,7 +27,7 @@ interface IApplicationCard {
     emergency_call: boolean
 }
 
-export const ApplicationCard = ({ title, description, price_min, price_max, commission, phone, execute_at, address, onClick, onRefund, onReject, status_id, emergency_call }: IApplicationCard) => {
+export const ApplicationCard = ({ description, price_min, price_max, commission, phone, execute_at, address, onClick, onRefund, onReject, status_id, emergency_call }: IApplicationCard) => {
     const popupStore = usePopupStore('phone-popup')
     const [showButton, setShowButton] = useState<boolean>(false)
 
@@ -57,7 +56,6 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
                 }
             }}
         >
-            <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
                 <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
@@ -99,11 +97,13 @@ export const ApplicationCard = ({ title, description, price_min, price_max, comm
             )}
             {(showButton || status_id === 2 || status_id === 3) && (
                 <Button
+                    type="button"
                     label={status_id === 3 ? 'Выполнить' : status_id === 2 ? 'Начать исполнять' : 'Взять'}
                     variant={status_id === 3 ? "green" : "default"}
                     height="h-[36px]"
                     className={`${status_id === 2 ? 'mt-2' : 'mt-5'}`}
                     onClick={(e) => {
+                        e.preventDefault()
                         e.stopPropagation();
                         onClick?.();
                     }}

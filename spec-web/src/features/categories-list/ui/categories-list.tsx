@@ -32,7 +32,7 @@ export const CategoriesList = ({ categories }: ICategoriesListProps) => {
                                 key={index}
                                 className="text-[16px] font-[400] text-dark cursor-pointer"
                             >
-                                {category?.name}
+                                {category}
                                 <div className='w-full h-[1px] bg-[#F5F5F5] mt-1' />
                             </span>
                         ))}

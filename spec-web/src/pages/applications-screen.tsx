@@ -25,10 +25,11 @@ export const ApplicationScreen = () => {
     const queryClient = useQueryClient();
     const { mutate } = useChangeStatus()
     const { mutate: linkFCM } = useLinkFCM()
-
-    const { data: applications, isLoading, error, refetch } = useGetApplications();
-    const { data: archive, isLoading: isArchiveLoading } = useGetArchive()
     const { data: userData } = useUserData()
+
+
+    const { data: applications, isLoading, error, refetch } = useGetApplications(userData?.id, userData?.city_id);
+    const { data: archive, isLoading: isArchiveLoading } = useGetArchive()
     const { data: noApplicationText, isLoading: isTextLoading } = useGetNoApplicationText()
 
     const { isOpen, passedValue, open: openPhonePopup, setPassedValue: setPhoneValue } = usePopupStore("phone-popup");
@@ -39,7 +40,7 @@ export const ApplicationScreen = () => {
     const { isOpen: isOpenReject, open: openRejectPopup, close: closeRejectPopup } = usePopupStore("reject-popup");
 
     const { setTaken, taken, } = useTakenApplicationStore();
-    const [currentCard, setCurrentCard] = useState<number | null>(null);
+    const [currentApplicationId, setCurrentApplicationId] = useState<number | null>(null);
 
     const temporaryKey = localStorage.getItem("temporaryKey");
 
@@ -67,25 +68,33 @@ export const ApplicationScreen = () => {
     if (!applications) return <p className="text-center">Нет доступных заявок</p>;
     if (!archive) return <p className="text-center">Загрузка архива...</p>;
 
-    const handleTakeApplication = (index: number, phone: string) => {
-        if (taken.includes(index)) return;
-
-        const unpaidApplications = archive?.filter((app: any) => app.balance_history?.length === 0) || [];
-
-        if (unpaidApplications.length >= 2) {
-            openTakenPopup();
-            return;
-        }
-
-        setPhoneValue(phone);
-        openPhonePopup();
-        setTaken(index);
+    const getUnpaidApplications = () => {
+        return archive?.filter((app: any) =>
+            app.balance_history?.length === 0
+        ) || [];
     };
 
+    const unpaidApplications = getUnpaidApplications();
+
+    // const handleTakeApplication = (index: number, phone: string) => {
+    //     if (taken.includes(index)) return;
+
+    //     const unpaid = getUnpaidApplications();
+
+    //     if (unpaid.length >= 2) {
+    //         openTakenPopup();
+    //         return;
+    //     }
+
+    //     setPhoneValue(phone);
+    //     openPhonePopup();
+    //     setTaken(index);
+    // };
+
     const handleStartExecution = () => {
-        if (currentCard !== null && applications) {
-            handleChangeStatus(applications[currentCard].id, { status_id: 3 })
-            setCurrentCard(null);
+        if (currentApplicationId !== null) {
+            handleChangeStatus(currentApplicationId, { status_id: 3 })
+            setCurrentApplicationId(null);
             closeExecutionPopup();
         }
     }
@@ -110,25 +119,25 @@ export const ApplicationScreen = () => {
 
 
     const handleRefund = () => {
-        if (currentCard !== null && applications) {
-            handleChangeStatus(applications[currentCard].id, { status_id: 4, comment: refundReason })
-            setCurrentCard(null);
+        if (currentApplicationId !== null) {
+            handleChangeStatus(currentApplicationId, { status_id: 4, comment: refundReason })
+            setCurrentApplicationId(null);
             closeRefundPopup();
         }
     }
 
     const handleClientDeny = () => {
-        if (currentCard !== null && applications) {
-            handleChangeStatus(applications[currentCard].id, { status_id: 5, comment: denyReason })
-            setCurrentCard(null);
+        if (currentApplicationId !== null) {
+            handleChangeStatus(currentApplicationId, { status_id: 5, comment: denyReason })
+            setCurrentApplicationId(null);
             closeRejectPopup();
         }
     }
 
     const handleComplete = () => {
-        if (currentCard !== null && applications) {
-            handleChangeStatus(applications[currentCard].id, { status_id: 6 })
-            setCurrentCard(null);
+        if (currentApplicationId !== null) {
+            handleChangeStatus(currentApplicationId, { status_id: 6 })
+            setCurrentApplicationId(null);
             closeCompletePopup();
         }
     }
@@ -148,46 +157,56 @@ export const ApplicationScreen = () => {
         )
     }
 
-    let notPaid = archive
-        ?.filter((app: any) => app.balance_history?.length === 0)
-        .map((app: any) => app.address)
-        .join(', ') || null
+
+    const notPaid = unpaidApplications.length
+        ? unpaidApplications.map((app: any) => app.address).join(', ')
+        : "";
 
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {applications?.slice()
                     .sort((a: any, b: any) => (a.status_id === 2 && a.status_id === 3 ? -1 : b.status_id === 2 ? 1 : 0))
-                    .map((application: any, index: number) => {
+                    .map((application: any) => {
                         return (
                             <ApplicationCard
-                                key={index}
+                                key={application.id}
                                 {...application}
-                                index={index}
                                 onReject={() => {
-                                    setCurrentCard(index);
+                                    setCurrentApplicationId(application.id);
                                     openRejectPopup();
                                 }}
                                 onRefund={() => {
-                                    setCurrentCard(index);
+                                    setCurrentApplicationId(application.id);
                                     openRefundPopup();
                                 }}
                                 onClick={() => {
-                                    setCurrentCard(index);
+                                    setCurrentApplicationId(application.id);
+
                                     if (application.status_id === 3) {
                                         openCompletePopup();
-                                    } else if (application.status_id === 2) {
+                                        return;
+                                    }
+
+                                    if (application.status_id === 2) {
                                         openExecutionPopup();
-                                    } else if (taken.length >= 1) {
-                                        openTakenPopup();
-                                    } else if (application.status_id === 1) {
-                                        const unpaidApplications = archive?.filter((app: any) => (app.balance_history?.length === 0) && app.status_id !== 4 && app.status_id !== 5) || [];
-                                        if (unpaidApplications.length >= 2) {
-                                            openTakenPopup();
-                                        } else {
-                                            handleChangeStatus(application.id, { status_id: 2 })
-                                            handleTakeApplication(index, application.phone);
-                                        }
+                                        return;
+                                    }
+
+                                    const unpaid = getUnpaidApplications();
+
+                                    if (unpaid.length >= 2) {
+                                        openTakenPopup(); // показать попап с адресами
+                                        return; // 👈 не даём ничего менять
+                                    }
+
+                                    if (application.status_id === 1) {
+                                        setPhoneValue(application.phone);
+                                        setTaken(application.id);
+                                        openPhonePopup();
+
+                                        // теперь можно менять статус
+                                        handleChangeStatus(application.id, { status_id: 2 });
                                     }
                                 }}
                             />
@@ -235,7 +254,7 @@ export const ApplicationScreen = () => {
                     closeLabel="Нет"
                     actionLabel="Да"
                     onClick={() => {
-                        if (currentCard !== null) {
+                        if (currentApplicationId !== null) {
                             handleComplete()
                             closeCompletePopup();
                         }
@@ -251,7 +270,7 @@ export const ApplicationScreen = () => {
                     closeLabel="Отмена"
                     actionLabel="Отправить"
                     onClick={(reason) => {
-                        if (currentCard !== null && reason) {
+                        if (currentApplicationId !== null && reason) {
                             handleRefund()
                             closeRefundPopup();
                         }
@@ -276,7 +295,7 @@ export const ApplicationScreen = () => {
                     closeLabel="Отмена"
                     actionLabel="Отправить"
                     onClick={(reason) => {
-                        if (currentCard !== null && reason) {
+                        if (currentApplicationId !== null && reason) {
                             handleClientDeny()
                             closeRejectPopup();
                         }

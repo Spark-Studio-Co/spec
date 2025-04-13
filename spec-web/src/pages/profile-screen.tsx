@@ -5,7 +5,6 @@ import { Button } from "../shared/ui/button/button";
 import { FormattedPhone } from "../shared/ui/formatted-phone/formatted-phone";
 
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
-import { useGetCategories } from "../entities/categories/api/use-get-categories";
 import { useUserData } from "../entities/user/api/use-user-data";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetCityById } from "../shared/hooks/useGetCityById";
@@ -13,11 +12,14 @@ import { useEffect } from "react";
 
 export const ProfileScreen = () => {
     const queryClient = useQueryClient()
-    const { data: categories } = useGetCategories()
     const { data: userData, refetch } = useUserData()
     const { logout } = useAuthData();
 
     const currentDate = new Date().toISOString().split("T")[0];
+
+    const categories = Array.isArray(userData?.user_category)
+        ? userData.user_category.map((item: any) => item.categories.name)
+        : [];
 
     const handleLogout = () => {
         logout()

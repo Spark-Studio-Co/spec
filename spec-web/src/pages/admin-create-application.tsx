@@ -20,8 +20,10 @@ import { useSelectorStore } from "../shared/model/selector-store";
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 import { inputMask } from "../shared/utils/inputMask";
 import { useCheckboxStore } from "../shared/model/checkbox-store";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const AdminCreateApplication = () => {
+  const queryClient = useQueryClient()
   const { data: cities } = useGetCities();
   const { data: categories } = useGetCategories();
   const { isVisible, toggle, open } = useVisibleStore("time");
@@ -188,8 +190,10 @@ export const AdminCreateApplication = () => {
       },
       {
         onSuccess: (data: any) => {
+          queryClient.invalidateQueries({
+            queryKey: "applications"
+          })
           console.log("Заявка успешно создана:", data);
-          alert("Заявка успешно создана");
           navigate("/admin/applications");
           store.setAddress("");
           store.setDescription("");
