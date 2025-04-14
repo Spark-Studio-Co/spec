@@ -22,7 +22,7 @@ export const AdminArchiveScreen = () => {
 
 
     const handlePayComission = (index: number, commission: number, price_max: number) => {
-        console.log("Click: Pay commission")
+        console.log("Click: Pay commission", currentCard)
 
         setCurrentCard(index);
         const taskId = archive[index]?.id

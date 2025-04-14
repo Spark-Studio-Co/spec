@@ -12,6 +12,7 @@ export const ArchiveScreen = () => {
 
 
     const handleKaspiRedirect = (index: number) => {
+        console.log(currentCard)
         setCurrentCard(index);
         window.open("https://pay.kaspi.kz/pay/tmdleih3", "_blank");
     }
