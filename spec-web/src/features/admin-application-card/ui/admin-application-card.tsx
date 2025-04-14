@@ -20,30 +20,38 @@ interface IApplicationCard {
     performer_name: string
     performer_phone: string
     users_tasks_performer_user_idTousers: any
-    emergency_call: boolean
+    emergency_call: boolean,
+    title: string
 }
 
-export const AdminApplicationCard = ({ description, price_min, price_max, commission, phone, execute_at, address, onClick, status_id, users_tasks_performer_user_idTousers, emergency_call }: IApplicationCard) => {
-    const isoDate = execute_at;
-    const humanReadable = new Intl.DateTimeFormat("ru-RU", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "UTC"
-    }).format(new Date(isoDate));
-
+export const AdminApplicationCard = ({ description, price_min, title, price_max, commission, phone, execute_at, address, onClick, status_id, users_tasks_performer_user_idTousers, emergency_call }: IApplicationCard) => {
+    const formatPrice = (price: string): string => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    };
+    const humanReadable = execute_at === "Сейчас"
+        ? "Сейчас"
+        : new Intl.DateTimeFormat("ru-RU", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "UTC"
+        }).format(new Date(execute_at));
 
     return (
         <div
             className="w-full min-h-[80px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px] cursor-pointer"
         >
+            <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
-                <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
+                {price_min === price_max ?
+                    <span className="font-[600] text-[16px] text-dark">{formatPrice(price_min)} ₸</span> :
+                    <span className="font-[600] text-[16px] text-dark">{formatPrice(price_min)} - {formatPrice(price_max)} ₸</span>
+                }
                 <span className="text-[14px] font-[400] text-dark">
-                    Комиссия {commission}  ₸
+                    Комиссия {formatPrice(commission)} ₸
                 </span>
             </div>
             <div className="flex flex-row items-center mt-3 gap-x-1.5">

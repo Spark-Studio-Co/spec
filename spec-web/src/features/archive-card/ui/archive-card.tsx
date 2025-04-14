@@ -27,6 +27,9 @@ interface IApplicationCard {
 }
 
 export const ArchiveCard = ({ title, description, commission, price_min, price_max, phone, execute_at, address, onClick, status_id, comment, balance_history, id, isLoading }: IApplicationCard) => {
+    const formatPrice = (price: string): string => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    };
     const popupStore = usePopupStore('phone-popup')
 
     const handlePhoneClick = () => {
@@ -34,15 +37,16 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
         popupStore.open()
     }
 
-    const isoDate = execute_at;
-    const humanReadable = new Intl.DateTimeFormat("ru-RU", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "UTC"
-    }).format(new Date(isoDate));
+    const humanReadable = execute_at === "Сейчас"
+        ? "Сейчас"
+        : new Intl.DateTimeFormat("ru-RU", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "UTC"
+        }).format(new Date(execute_at));
 
 
 
@@ -51,8 +55,11 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
             <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
-                <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
-                <span className="text-[14px] font-[400] text-dark">Комиссия {commission} ₸</span>
+                {price_min === price_max ?
+                    <span className="font-[600] text-[16px] text-dark">{formatPrice(price_min)} ₸</span> :
+                    <span className="font-[600] text-[16px] text-dark">{formatPrice(price_min)} - {formatPrice(price_max)} ₸</span>
+                }
+                <span className="text-[14px] font-[400] text-dark">Комиссия {formatPrice(commission)} ₸</span>
             </div>
             <div className="flex flex-row items-center gap-x-1.5" onClick={handlePhoneClick}>
                 <PhoneIcon />
@@ -82,7 +89,7 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
                 }
             </div>
             {status_id === 6 && (balance_history?.length === 0 || (balance_history && balance_history.includes(id))) && (
-                <Button label={isLoading ? 'Загрузка...' : `Оплатить  ${commission} ₸`} variant={isLoading ? 'disabled' : 'default'} height="h-[36px]" className='mt-5' onClick={onClick} />
+                <Button type="button" label={isLoading ? 'Загрузка...' : `Оплатить  ${formatPrice(commission)} ₸`} variant={isLoading ? 'disabled' : 'default'} height="h-[36px]" className='mt-5' onClick={onClick} />
             )}
             {status_id === 4 &&
                 <div className="flex flex-row items-start gap-x-1.5 mt-3">

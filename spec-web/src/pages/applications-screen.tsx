@@ -76,24 +76,9 @@ export const ApplicationScreen = () => {
 
     const unpaidApplications = getUnpaidApplications();
 
-    // const handleTakeApplication = (index: number, phone: string) => {
-    //     if (taken.includes(index)) return;
-
-    //     const unpaid = getUnpaidApplications();
-
-    //     if (unpaid.length >= 2) {
-    //         openTakenPopup();
-    //         return;
-    //     }
-
-    //     setPhoneValue(phone);
-    //     openPhonePopup();
-    //     setTaken(index);
-    // };
-
     const handleStartExecution = () => {
         if (currentApplicationId !== null) {
-            handleChangeStatus(currentApplicationId, { status_id: 3 })
+            handleChangeStatus(currentApplicationId, { status_id: 3, performer_user_id: userData?.id })
             setCurrentApplicationId(null);
             closeExecutionPopup();
         }
@@ -120,7 +105,7 @@ export const ApplicationScreen = () => {
 
     const handleRefund = () => {
         if (currentApplicationId !== null) {
-            handleChangeStatus(currentApplicationId, { status_id: 4, comment: refundReason })
+            handleChangeStatus(currentApplicationId, { status_id: 4, comment: refundReason, performer_user_id: userData?.id })
             setCurrentApplicationId(null);
             closeRefundPopup();
         }
@@ -128,7 +113,7 @@ export const ApplicationScreen = () => {
 
     const handleClientDeny = () => {
         if (currentApplicationId !== null) {
-            handleChangeStatus(currentApplicationId, { status_id: 5, comment: denyReason })
+            handleChangeStatus(currentApplicationId, { status_id: 5, comment: denyReason, performer_user_id: userData?.id })
             setCurrentApplicationId(null);
             closeRejectPopup();
         }
@@ -136,7 +121,7 @@ export const ApplicationScreen = () => {
 
     const handleComplete = () => {
         if (currentApplicationId !== null) {
-            handleChangeStatus(currentApplicationId, { status_id: 6 })
+            handleChangeStatus(currentApplicationId, { status_id: 6, performer_user_id: userData?.id })
             setCurrentApplicationId(null);
             closeCompletePopup();
         }
@@ -171,6 +156,7 @@ export const ApplicationScreen = () => {
                         return (
                             <ApplicationCard
                                 key={application.id}
+                                title={application.categories?.name || 'Без названия'}
                                 {...application}
                                 onReject={() => {
                                     setCurrentApplicationId(application.id);
@@ -196,8 +182,8 @@ export const ApplicationScreen = () => {
                                     const unpaid = getUnpaidApplications();
 
                                     if (unpaid.length >= 2) {
-                                        openTakenPopup(); // показать попап с адресами
-                                        return; // 👈 не даём ничего менять
+                                        openTakenPopup();
+                                        return;
                                     }
 
                                     if (application.status_id === 1) {
@@ -205,8 +191,7 @@ export const ApplicationScreen = () => {
                                         setTaken(application.id);
                                         openPhonePopup();
 
-                                        // теперь можно менять статус
-                                        handleChangeStatus(application.id, { status_id: 2 });
+                                        handleChangeStatus(application.id, { status_id: 2, performer_user_id: userData?.id });
                                     }
                                 }}
                             />

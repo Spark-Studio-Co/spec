@@ -33,6 +33,7 @@ export const Button: React.FC<IButtonProps> = ({
     width,
     height,
     className,
+    type = "button",
     ...props
 }) => {
     return (

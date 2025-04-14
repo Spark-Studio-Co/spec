@@ -27,6 +27,7 @@ apiClient.interceptors.response.use(
             console.error("API Error:", status, data);
 
             if (status === 401) {
+                localStorage.removeItem("auth-storage");
                 window.location.href = '/';
             }
         }

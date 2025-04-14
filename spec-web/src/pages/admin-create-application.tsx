@@ -33,12 +33,17 @@ export const AdminCreateApplication = () => {
   const [rawPhone, setRawPhone] = useState<string>("");
   const [commission, setCommission] = useState(0);
 
+  const formatPrice = (price: number): string => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { rawValue } = inputMask(e, store.setPhone);
     setRawPhone(rawValue || "");
   };
 
-  const formatDateToRussian = (date: Date) => {
+  const formatDateToRussian = (date: Date | null) => {
+    if (!date) return "";
     return date.toLocaleDateString("ru-RU", {
       day: "2-digit",
       month: "2-digit",
@@ -47,17 +52,16 @@ export const AdminCreateApplication = () => {
   };
 
   const handleNowCheck = () => {
-    if (!timeStore.setChecked) {
-      const now = new Date();
-      const formattedTime = now.toTimeString().slice(0, 5);
-
-      setSelectedDate(now);
-      setSelectedTime(formattedTime);
-      updateDateTime(now, formattedTime);
+    if (!timeStore.checked) {
+      store.setDate("Сейчас");
+      setSelectedDate(null);
+      setSelectedTime("");
     } else {
       setSelectedDate(null);
       setSelectedTime("");
+      store.setDate("");
     }
+
     timeStore.setChecked();
   };
 
@@ -70,11 +74,8 @@ export const AdminCreateApplication = () => {
 
         const formattedDate = `${localDate.getFullYear()}-${(localDate.getMonth() + 1).toString().padStart(2, "0")}-${localDate.getDate().toString().padStart(2, "0")}T${localDate.getHours().toString().padStart(2, "0")}:${localDate.getMinutes().toString().padStart(2, "0")}`;
 
-        console.log(
-          "📌 Корректное время (UTC+6, без конвертации в UTC):",
-          formattedDate
-        );
         store.setDate(formattedDate);
+        console.log("📌 execute_at =>", formattedDate);
       }
     }
   };
@@ -91,15 +92,8 @@ export const AdminCreateApplication = () => {
 
   useEffect(() => {
     open();
-
-    if (timeStore.checked) {
-      const now = new Date();
-      const formattedTime = now.toTimeString().slice(0, 5);
-
-      setSelectedDate(now);
-      setSelectedTime(formattedTime);
-      updateDateTime(now, formattedTime);
-    }
+    store.setDate("Сейчас");
+    timeStore.setChecked();
   }, []);
 
   const navigate = useNavigate();
@@ -137,6 +131,7 @@ export const AdminCreateApplication = () => {
   };
 
   const calculateCommission = (min: number, max: number) => {
+    if (!min || !max || isNaN(min) || isNaN(max)) return 0;
     if (min < 7000) return 1000;
     if (min >= 7000 && min < 10000) return 2000;
     if (min >= 10000 && min < 30000) return 3000;
@@ -185,7 +180,6 @@ export const AdminCreateApplication = () => {
         phone: phoneWithPlus,
         status_id: 1,
         creator_user_id: userId,
-        performer_user_id: userId,
         emergency_call: store.emergency,
       },
       {
@@ -297,13 +291,15 @@ export const AdminCreateApplication = () => {
             placeholder="Мин."
             baseStyle="applicationStyle"
             className="mt-2"
-            value={store.priceMin}
+            value={store.priceMin ? formatPrice(store.priceMin) : ''}
             onChange={(e) => {
-              const minValue = Number(e.target.value);
-              store.setPriceMin(minValue);
-
-              if (isPriceMaxSynced) {
-                store.setPriceMax(minValue);
+              const rawValue = e.target.value.replace(/\s/g, '');
+              const minValue = Number(rawValue);
+              if (!isNaN(minValue)) {
+                store.setPriceMin(minValue);
+                if (isPriceMaxSynced) {
+                  store.setPriceMax(minValue);
+                }
               }
             }}
           />
@@ -311,18 +307,21 @@ export const AdminCreateApplication = () => {
             placeholder="Макс."
             baseStyle="applicationStyle"
             className="mt-2"
-            value={store.priceMax}
+            value={store.priceMax ? formatPrice(store.priceMax) : ''}
             onChange={(e) => {
-              const maxValue = Number(e.target.value);
-              store.setPriceMax(maxValue);
-              setIsPriceMaxSynced(false); // если пользователь меняет вручную — отключаем автосинхронизацию
+              const rawValue = e.target.value.replace(/\s/g, '');
+              const maxValue = Number(rawValue);
+              if (!isNaN(maxValue)) {
+                store.setPriceMax(maxValue);
+                setIsPriceMaxSynced(false);
+              }
             }}
           />
 
           <Input
             readOnly
-            placeholder={String(commission)}
-            value={commission}
+            placeholder="0"
+            value={commission ? formatPrice(commission) : '0'}
             baseStyle="applicationStyle"
             className="mt-2"
           />
@@ -395,7 +394,7 @@ export const AdminCreateApplication = () => {
                   }}
                 >
                   <span className="text-[16px] font-[400]">
-                    {selectedDate ? formatDateToRussian(selectedDate) : "Дата"}
+                    {timeStore.checked ? "Сейчас" : (selectedDate ? formatDateToRussian(selectedDate) : "Дата")}
                   </span>
                   <BigCalendarIcon />
                 </div>

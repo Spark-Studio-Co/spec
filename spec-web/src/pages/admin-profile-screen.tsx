@@ -5,7 +5,6 @@ import { Button } from "../shared/ui/button/button";
 
 import { useAuthData } from "../entities/auth-user/api/use-auth-data";
 
-import { useGetCategories } from "../entities/categories/api/use-get-categories";
 import { useEffect } from "react";
 import { useUserData } from "../entities/user/api/use-user-data";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,11 +15,17 @@ import { useAdminCheck } from "../entities/admin-login/api/use-admin-check";
 
 export const AdminProfileScreen = () => {
     const queryClient = useQueryClient()
-    const { data: categories } = useGetCategories()
     const { data: userData, refetch } = useUserData()
     const { logout, userId } = useAuthData();
 
     const { data: adminCheck } = useAdminCheck(userId)
+
+    const categories = Array.isArray(userData?.user_category)
+        ? userData.user_category.map((item: any) => item.categories.name)
+        : [];
+
+    const city = useGetCityById(userData?.city_id)
+    const cityName = city?.name || 'Не найден'
 
     useEffect(() => {
         if (adminCheck?.isAdmin === false) {
@@ -50,7 +55,7 @@ export const AdminProfileScreen = () => {
             <ProfileHeader
                 name={userData?.fullname || ""}
                 phone={<FormattedPhone phone={rawPhone} />}
-                city={useGetCityById(userData?.city_id).name || 'Не найден'}
+                city={cityName}
             />
             <CategoriesList categories={categories} />
             <StatisticsCard

@@ -4,6 +4,7 @@ import CommentIcon from "../../../shared/assets/icons/comment-icon"
 import ClockIcon from "../../../shared/assets/icons/clock-icon"
 import NavigationIcon from "../../../shared/assets/icons/navigation-icon"
 import PhoneIcon from "../../../shared/assets/icons/phone-icon"
+import { Button } from "../../../shared/ui/button/button"
 
 interface IApplicationCard {
     id: number
@@ -20,27 +21,35 @@ interface IApplicationCard {
     balance_history: number[]
     performer_name: string
     performer_phone: string
+    onClick?: () => void
 }
 
-export const AdminArchiveCard = ({ title, description, commission, price_min, price_max, phone, execute_at, address, status_id, comment, balance_history, performer_name, performer_phone }: IApplicationCard) => {
+export const AdminArchiveCard = ({ title, description, commission, price_min, price_max, phone, execute_at, address, status_id, comment, balance_history, performer_name, performer_phone, onClick }: IApplicationCard) => {
+    const formatPrice = (price: string): string => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    };
 
-    const isoDate = execute_at;
-    const humanReadable = new Intl.DateTimeFormat("ru-RU", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "UTC"
-    }).format(new Date(isoDate));
+    const humanReadable = execute_at === "Сейчас"
+        ? "Сейчас"
+        : new Intl.DateTimeFormat("ru-RU", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "UTC"
+        }).format(new Date(execute_at));
 
     return (
         <div className="w-full min-h-[234px] py-4 px-3 flex flex-col items-start bg-white rounded-[12px]">
             <span className="font-[600] text-[18px] text-dark">{title}</span>
             <p className="text-[16px] text-[#404040] font-[400] leading-[20px] mt-1">{description}</p>
             <div className="flex flex-row items-center mt-2 gap-x-2">
-                <span className="font-[600] text-[16px] text-dark">{price_min} - {price_max} ₸</span>
-                <span className="text-[14px] font-[400] text-dark">Комиссия {commission} ₸</span>
+                {price_min === price_max ?
+                    <span className="font-[600] text-[16px] text-dark">{formatPrice(price_min)} ₸</span> :
+                    <span className="font-[600] text-[16px] text-dark">{formatPrice(price_min)} - {formatPrice(price_max)} ₸</span>
+                }
+                <span className="text-[14px] font-[400] text-dark">Комиссия {formatPrice(commission)} ₸</span>
             </div>
             <div className="flex flex-row items-center gap-x-1.5">
                 <PhoneIcon />
@@ -59,12 +68,11 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
                     className="text-[16px] text-[#007AFF] font-[400] underline"
                 >
                     {address}
-                </a>            </div>
-
+                </a>
+            </div>
             <span className="text-dark font-[400] text-[14px] mt-4">
                 {performer_name}
             </span>
-
             <div className="flex flex-row items-center gap-x-1.5">
                 <PhoneIcon />
                 <a href={`tel:${performer_phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{performer_phone}</a>
@@ -78,6 +86,9 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
                     <span className="text-[14px] font-[400] flex flex-row gap-x-1 items-center text-[#262626]"><div className="w-[8px] h-[8px] rounded-full bg-[#008235]" />Оплачено</span>
                 }
             </div>
+            {status_id === 6 && (balance_history?.length === 0 &&
+                <Button variant="default" type="button" label="Оплачено" height="h-[36px]" className='mt-5' onClick={onClick} />
+            )}
             {status_id === 4 &&
                 <div className="flex flex-row items-start gap-x-1.5 mt-3">
                     <CommentIcon />

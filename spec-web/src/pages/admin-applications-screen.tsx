@@ -59,7 +59,9 @@ export const AdminApplicationScreen = () => {
                 {applications?.map((application: any, index: number) => (
                     <AdminApplicationCard
                         key={index}
-                        users_tasks_performer_user_idTousers={application?.task?.users_tasks_performer_user_idTousers}                        {...application}
+                        title={application.categories?.name || 'Без названия'}
+                        {...application}
+                        users_tasks_performer_user_idTousers={application?.task?.users_tasks_performer_user_idTousers}
                         onClick={() => {
                             setCurrentCard(application.id)
                             setCityId(application.city_id)

@@ -12,6 +12,5 @@ export interface ICreateApplicationRDO {
     address: string;
     status_id: number;
     creator_user_id: number | null;
-    performer_user_id: number | null;
     emergency_call: boolean;
 }
