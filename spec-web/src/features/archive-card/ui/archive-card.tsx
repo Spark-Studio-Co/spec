@@ -30,6 +30,17 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
     const formatPrice = (price: string): string => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     };
+    
+    const formatPhoneNumber = (phone: string): string => {
+        // Remove all non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        // Format as +7 XXX XXX XX XX
+        if (cleaned.length === 11) {
+            return `+${cleaned.substring(0, 1)} ${cleaned.substring(1, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        }
+        return phone; // Return original if not 11 digits
+    };
+    
     const popupStore = usePopupStore('phone-popup')
 
     const handlePhoneClick = () => {
@@ -63,7 +74,7 @@ export const ArchiveCard = ({ title, description, commission, price_min, price_m
             </div>
             <div className="flex flex-row items-center gap-x-1.5" onClick={handlePhoneClick}>
                 <PhoneIcon />
-                <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>
+                <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{formatPhoneNumber(phone)}</a>
             </div>
             <div className="flex flex-row items-center mt-2.5 gap-x-1">
                 <ClockIcon />

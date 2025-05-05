@@ -28,6 +28,16 @@ export const AdminApplicationCard = ({ description, price_min, title, price_max,
     const formatPrice = (price: string): string => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     };
+
+    const formatPhoneNumber = (phone: string): string => {
+        // Remove all non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        // Format as +7 XXX XXX XX XX
+        if (cleaned.length === 11) {
+            return `+${cleaned.substring(0, 1)} ${cleaned.substring(1, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        }
+        return phone; // Return original if not 11 digits
+    };
     const humanReadable = execute_at === "Сейчас"
         ? "Сейчас"
         : new Intl.DateTimeFormat("ru-RU", {
@@ -56,7 +66,7 @@ export const AdminApplicationCard = ({ description, price_min, title, price_max,
             </div>
             <div className="flex flex-row items-center mt-3 gap-x-1.5">
                 <PhoneIcon />
-                <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>
+                <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{formatPhoneNumber(phone)}</a>
             </div>
             <div className="flex flex-row items-center mt-1.5 gap-x-1">
                 <ClockIcon />
@@ -72,14 +82,14 @@ export const AdminApplicationCard = ({ description, price_min, title, price_max,
                 >
                     {address}
                 </a>            </div>
-            {status_id === 2 && users_tasks_performer_user_idTousers &&
+            {users_tasks_performer_user_idTousers &&
                 <>
                     <span className="text-dark font-[400] text-[14px] mt-2">
-                        {users_tasks_performer_user_idTousers.fullname}
+                        {users_tasks_performer_user_idTousers?.fullname}
                     </span>
                     <div className="flex flex-row items-center gap-x-1.5">
                         <PhoneIcon />
-                        <a href={`tel:${users_tasks_performer_user_idTousers?.phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{users_tasks_performer_user_idTousers.phone}</a>
+                        <a href={`tel:${users_tasks_performer_user_idTousers?.phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{formatPhoneNumber(users_tasks_performer_user_idTousers.phone)}</a>
                     </div>
                 </>
             }
@@ -88,8 +98,13 @@ export const AdminApplicationCard = ({ description, price_min, title, price_max,
                     {status_id === 2 && 'Взят'}
                 </span>
             </div>
+            <div className={` ${status_id === 3 && 'mt-2'} flex flex-row justify-between`}>
+                <span className={`text-[16px] font-[500] ${status_id === 3 && 'text-[#00A6F4]'} `}>
+                    {status_id === 3 && 'На исполнении'}
+                </span>
+            </div>
             {emergency_call && <span className="text-[16px] text-[#262626] font-[400] mt-2">🔥 Аварийный вызов</span>}
-            <Button
+            {status_id === 1 && <Button
                 label={'Начать исполнять'}
                 variant="default"
                 height="h-[36px]"
@@ -99,7 +114,7 @@ export const AdminApplicationCard = ({ description, price_min, title, price_max,
                     e.stopPropagation();
                     onClick?.();
                 }}
-            />
+            />}
         </div>
     )
 }

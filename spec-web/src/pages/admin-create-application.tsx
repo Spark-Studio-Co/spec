@@ -77,6 +77,9 @@ export const AdminCreateApplication = () => {
         store.setDate(formattedDate);
         console.log("📌 execute_at =>", formattedDate);
       }
+    } else if (!timeStore.checked) {
+      // Clear the date in store if either date or time is missing
+      store.setDate("");
     }
   };
 
@@ -125,6 +128,10 @@ export const AdminCreateApplication = () => {
     }
     if (store.priceMin > store.priceMax) {
       alert("Минимальная цена не может быть больше максимальной");
+      return false;
+    }
+    if (!timeStore.checked && (!selectedDate || !selectedTime)) {
+      alert("Пожалуйста, укажите дату и время или выберите 'Сейчас'");
       return false;
     }
     return true;
@@ -381,8 +388,11 @@ export const AdminCreateApplication = () => {
                     setSelectedTime(value);
                     if (value.length === 5) {
                       updateDateTime(selectedDate, value);
+                    } else {
+                      updateDateTime(selectedDate, "");
                     }
                   }}
+                  required={!timeStore.checked}
                 />
               </div>
               <div className="w-[65%] relative">
@@ -393,7 +403,7 @@ export const AdminCreateApplication = () => {
                     setIsDatePickerOpen(!isDatePickerOpen);
                   }}
                 >
-                  <span className="text-[16px] font-[400]">
+                  <span className={`text-[16px] font-[400] ${!timeStore.checked && !selectedDate ? 'text-[#737373]' : ''}`}>
                     {timeStore.checked ? "Сейчас" : (selectedDate ? formatDateToRussian(selectedDate) : "Дата")}
                   </span>
                   <BigCalendarIcon />
@@ -410,6 +420,7 @@ export const AdminCreateApplication = () => {
                         updateDateTime(date, selectedTime);
                         setIsDatePickerOpen(false);
                       }}
+                      minDate={new Date()}
                       inline
                       popperClassName="z-50"
                     />

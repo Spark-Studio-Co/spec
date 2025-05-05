@@ -61,8 +61,7 @@ export const AdminApplicationScreen = () => {
                         key={index}
                         title={application.categories?.name || 'Без названия'}
                         {...application}
-                        users_tasks_performer_user_idTousers={application?.task?.users_tasks_performer_user_idTousers}
-                        onClick={() => {
+                        users_tasks_performer_user_idTousers={application?.users_tasks_performer_user_idTousers} onClick={() => {
                             setCurrentCard(application.id)
                             setCityId(application.city_id)
                             performerSelector.open();

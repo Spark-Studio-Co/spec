@@ -32,6 +32,17 @@ export const ApplicationCard = ({ description, title, price_min, price_max, comm
     const formatPrice = (price: string): string => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     };
+    
+    const formatPhoneNumber = (phone: string): string => {
+        // Remove all non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        // Format as +7 XXX XXX XX XX
+        if (cleaned.length === 11) {
+            return `+${cleaned.substring(0, 1)} ${cleaned.substring(1, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        }
+        return phone; // Return original if not 11 digits
+    };
+    
     const popupStore = usePopupStore('phone-popup')
     const [showButton, setShowButton] = useState<boolean>(false)
 
@@ -74,7 +85,7 @@ export const ApplicationCard = ({ description, title, price_min, price_max, comm
             {(status_id === 2 || status_id === 3) && (
                 <div className="flex flex-row items-center mt-3 gap-x-1.5" onClick={handlePhoneClick}>
                     <PhoneIcon />
-                    <a className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>
+                    <a className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{formatPhoneNumber(phone)}</a>
                 </div>
             )}
             <div className="flex flex-row items-center mt-1.5 gap-x-1">

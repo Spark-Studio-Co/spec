@@ -36,14 +36,14 @@ export const Selector = ({
 
   const filteredOptions = useMemo(() => {
     return options?.filter((option: { name: string }) =>
-      option?.name?.toLowerCase().includes(searchText.toLowerCase())
-    );
+      option?.name?.toLowerCase()?.includes(searchText.toLowerCase())
+    ) || [];
   }, [options, searchText]);
 
   const filteredPerformers = useMemo(() => {
     return options?.filter((option: { fullname: string }) =>
       option?.fullname?.toLowerCase()?.includes(searchText.toLowerCase())
-    );
+    ) || [];
   }, [options, searchText]);
 
   const handleOptionSelect = (optionId: number, option: string) => {

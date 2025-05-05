@@ -28,6 +28,16 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
     const formatPrice = (price: string): string => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     };
+    
+    const formatPhoneNumber = (phone: string): string => {
+        // Remove all non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        // Format as +7 XXX XXX XX XX
+        if (cleaned.length === 11) {
+            return `+${cleaned.substring(0, 1)} ${cleaned.substring(1, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7, 9)} ${cleaned.substring(9, 11)}`;
+        }
+        return phone; // Return original if not 11 digits
+    };
 
     const humanReadable = execute_at === "Сейчас"
         ? "Сейчас"
@@ -53,7 +63,7 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
             </div>
             <div className="flex flex-row items-center gap-x-1.5">
                 <PhoneIcon />
-                <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{phone}</a>
+                <a href={`tel:${phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{formatPhoneNumber(phone)}</a>
             </div>
             <div className="flex flex-row items-center mt-2.5 gap-x-1">
                 <ClockIcon />
@@ -75,7 +85,7 @@ export const AdminArchiveCard = ({ title, description, commission, price_min, pr
             </span>
             <div className="flex flex-row items-center gap-x-1.5">
                 <PhoneIcon />
-                <a href={`tel:${performer_phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{performer_phone}</a>
+                <a href={`tel:${performer_phone}`} className="text-[18px] text-[#007AFF] font-[400] cursor-pointer">{formatPhoneNumber(performer_phone)}</a>
             </div>
 
             <div className="flex flex-row justify-between mt-4 w-full">
